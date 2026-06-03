@@ -103,7 +103,6 @@
         }
     }
 
-    // فتح نافذة المصادقة
     function openAuthModal() {
         document.getElementById('authModal').style.display = 'flex';
         authMode = 'login';
@@ -112,7 +111,6 @@
         document.getElementById('switchAuthMode').textContent = 'إنشاء حساب جديد';
     }
 
-    // تبديل وضع المصادقة (تسجيل الدخول / تسجيل جديد)
     document.getElementById('switchAuthMode').addEventListener('click', (e) => {
         e.preventDefault();
         authMode = authMode === 'login' ? 'register' : 'login';
@@ -121,7 +119,6 @@
         document.getElementById('switchAuthMode').textContent = authMode === 'register' ? 'تسجيل الدخول' : 'إنشاء حساب جديد';
     });
 
-    // معالجة تسجيل الدخول / التسجيل
     document.getElementById('authSubmitBtn').addEventListener('click', async () => {
         const username = document.getElementById('authUsername').value.trim();
         const password = document.getElementById('authPassword').value;
@@ -147,7 +144,6 @@
         }
     });
 
-    // عرض المنشورات
     async function renderPosts(postsArr, append = false) {
         const container = document.getElementById('feedContainer');
         if (!append) container.innerHTML = '';
@@ -189,14 +185,12 @@
         attachEvents();
     }
 
-    // ربط أحداث الأزرار
     function attachEvents() {
         document.querySelectorAll('.like-btn').forEach(btn => btn.addEventListener('click', handleLike));
         document.querySelectorAll('.comment-btn').forEach(btn => btn.addEventListener('click', openCommentsModal));
         document.querySelectorAll('.bookmark-btn').forEach(btn => btn.addEventListener('click', handleBookmark));
     }
 
-    // معالجة الإعجاب
     async function handleLike(e) {
         if (!currentUser) { showToast('⚠️ يجب تسجيل الدخول', true); return; }
         const btn = e.currentTarget;
@@ -213,7 +207,6 @@
         btn.querySelector('.count').textContent = formatNumber(updatedPost.likes_count);
     }
 
-    // معالجة الإشارة المرجعية
     async function handleBookmark(e) {
         if (!currentUser) { showToast('⚠️ يجب تسجيل الدخول', true); return; }
         const btn = e.currentTarget;
@@ -228,7 +221,6 @@
         }
     }
 
-    // فتح نافذة التعليقات
     async function openCommentsModal(e) {
         if (!currentUser) { showToast('⚠️ سجل الدخول', true); return; }
         const postId = parseInt(e.currentTarget.dataset.id);
@@ -243,14 +235,12 @@
         document.getElementById('commentsModal').style.display = 'flex';
     }
 
-    // إضافة تعليق جديد
     document.getElementById('addCommentBtn').addEventListener('click', async () => {
         if (!currentUser || !currentPostIdForComments) return;
         const body = document.getElementById('newCommentBody').value.trim();
         if (!body) { showToast('⚠️ اكتب تعليقاً', true); return; }
         await addComment(currentPostIdForComments, currentUser.id, body);
         document.getElementById('newCommentBody').value = '';
-        // تحديث واجهة التعليقات
         const comments = await getComments(currentPostIdForComments);
         const users = await apiRequest('users');
         const commentsHtml = comments.map(c => {
@@ -258,14 +248,12 @@
             return `<div style="padding:0.5rem;border-bottom:1px solid #e2e8f0;"><strong>${escapeHtml(commenter?.username || 'مستخدم')}</strong>: ${escapeHtml(c.body)}</div>`;
         }).join('');
         document.getElementById('commentsList').innerHTML = commentsHtml;
-        // تحديث عدد التعليقات في المنشور في الواجهة
         const updatedPost = await apiRequest(`posts/${currentPostIdForComments}`);
         const commentBtn = document.querySelector(`.comment-btn[data-id="${currentPostIdForComments}"] span`);
         if (commentBtn) commentBtn.textContent = updatedPost.comments_count;
         showToast('✅ تم إضافة التعليق');
     });
 
-    // تحميل المزيد من المنشورات
     async function loadMorePosts() {
         if (allPostsLoaded) return;
         const start = currentPage * POSTS_PER_PAGE;
@@ -286,7 +274,6 @@
         }
     }
 
-    // إعادة تحميل التغذية بالكامل
     async function resetAndLoadFeed() {
         currentPage = 0;
         allPostsLoaded = false;
@@ -301,7 +288,6 @@
         currentPage = 1;
         if (allPosts.length > POSTS_PER_PAGE) document.getElementById('loadMoreBtn').style.display = 'block';
         else allPostsLoaded = true;
-        // عرض المقترحات (أحدث 4 منشورات)
         const recommended = allPosts.slice(0,4);
         const recSection = document.getElementById('recommendedSection');
         const recRow = document.getElementById('recommendedRow');
@@ -318,7 +304,6 @@
         }
     }
 
-    // البحث
     document.getElementById('searchInput').addEventListener('input', async (e) => {
         const q = e.target.value.trim();
         if (!q) { resetAndLoadFeed(); return; }
@@ -328,7 +313,6 @@
         else document.getElementById('feedContainer').innerHTML = '<div class="empty-state">🔍 لا توجد نتائج</div>';
     });
 
-    // التنقل السفلي
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', async () => {
             const page = item.dataset.page;
@@ -359,7 +343,6 @@
         });
     });
 
-    // إنشاء منشور جديد
     document.getElementById('publishBtn').addEventListener('click', async () => {
         if (!currentUser) { showToast('⚠️ سجل الدخول', true); return; }
         const title = document.getElementById('postTitle').value.trim();
@@ -395,7 +378,6 @@
         resetAndLoadFeed();
     });
 
-    // معاينة الصورة
     document.getElementById('postImageFile').addEventListener('change', function(e) {
         const file = e.target.files[0];
         const preview = document.getElementById('imagePreview');
@@ -414,7 +396,6 @@
     document.querySelectorAll('.close-modal').forEach(btn => btn.addEventListener('click', () => btn.closest('.modal').style.display = 'none'));
     window.addEventListener('click', e => { if(e.target.classList.contains('modal')) e.target.style.display = 'none'; });
 
-    // بدء التطبيق
     updateUserUI();
     resetAndLoadFeed();
 </script>
