@@ -4,13 +4,89 @@
       "id": 1,
       "username": "زائر",
       "password": "123",
-      "created_at": "2025-01-01T10:00:00Z"
+      "name": "زائر المنصة",
+      "bio": "مرحباً بكم في منشوراتي، منصة التواصل الاجتماعي العربية.",
+      "avatar": "https://i.pravatar.cc/150?u=zair",
+      "coins": 500,
+      "preferences": {
+        "theme": "light",
+        "language": "ar",
+        "privacy": "public",
+        "notifications": {
+          "likes": true,
+          "comments": true,
+          "follows": true,
+          "retweets": true,
+          "gifts": true
+        }
+      },
+      "created_at": "2026-06-03T10:00:00.000Z"
     },
     {
       "id": 2,
       "username": "احمد",
       "password": "123",
-      "created_at": "2025-01-02T11:00:00Z"
+      "name": "أحمد التقني",
+      "bio": "مطور برمجيات ومهتم بالتقنية والذكاء الاصطناعي.",
+      "avatar": "https://i.pravatar.cc/150?u=ahmed",
+      "coins": 200,
+      "preferences": {
+        "theme": "dark",
+        "language": "ar",
+        "privacy": "public",
+        "notifications": {
+          "likes": true,
+          "comments": true,
+          "follows": true,
+          "retweets": true,
+          "gifts": true
+        }
+      },
+      "created_at": "2026-06-03T10:05:00.000Z"
+    },
+    {
+      "id": 3,
+      "username": "نور",
+      "password": "123",
+      "name": "نور الأدبية",
+      "bio": "كاتبة وشاعرة، أعشق الأدب واللغة العربية.",
+      "avatar": "https://i.pravatar.cc/150?u=noor",
+      "coins": 150,
+      "preferences": {
+        "theme": "light",
+        "language": "ar",
+        "privacy": "public",
+        "notifications": {
+          "likes": true,
+          "comments": true,
+          "follows": true,
+          "retweets": true,
+          "gifts": true
+        }
+      },
+      "created_at": "2026-06-03T10:10:00.000Z"
+    },
+    {
+      "id": 4,
+      "username": "سامر",
+      "password": "123",
+      "name": "سامر المصور",
+      "bio": "مصور فوتوغرافي هاوي، أوثق جمال الطبيعة.",
+      "avatar": "https://i.pravatar.cc/150?u=samer",
+      "coins": 300,
+      "preferences": {
+        "theme": "dark",
+        "language": "ar",
+        "privacy": "followers",
+        "notifications": {
+          "likes": true,
+          "comments": true,
+          "follows": true,
+          "retweets": false,
+          "gifts": true
+        }
+      },
+      "created_at": "2026-06-03T10:15:00.000Z"
     }
   ],
   "posts": [
@@ -18,28 +94,318 @@
       "id": 1,
       "author_id": 1,
       "author": "زائر",
-      "title": "مرحباً بكم في منشوراتي",
-      "content": "هذا أول منشور تجريبي",
-      "tags": "ترحيب",
-      "image_url": "",
-      "likes_count": 3,
-      "comments_count": 2,
-      "created_at": "2025-03-20T12:00:00Z"
+      "title": "مرحباً بكم في منشوراتي! 🌟",
+      "content": "يسعدني إطلاق هذه المنصة الاجتماعية العربية لنشارك معًا أفكارنا وإبداعاتنا. ابدأوا بالمشاركة والتفاعل!",
+      "tags": "ترحيب,منشوراتي",
+      "image_url": "https://picsum.photos/id/1015/800/600",
+      "video_url": null,
+      "likes_count": 5,
+      "comments_count": 3,
+      "retweet_count": 2,
+      "view_count": 150,
+      "is_retweet": false,
+      "retweet_of": null,
+      "quote_text": null,
+      "created_at": "2026-06-03T10:20:00.000Z"
     },
     {
       "id": 2,
       "author_id": 2,
       "author": "احمد",
-      "title": "تجربة جديدة",
-      "content": "هذا منشور من أحمد",
-      "tags": "تجربة",
+      "title": "أفضل 5 نصائح لتعلم البرمجة 💻",
+      "content": "1. ابدأ بأساس قوي\n2. مارس يوميًا\n3. ابنِ مشاريع صغيرة\n4. شارك في مجتمعات\n5. لا تخف من الأخطاء",
+      "tags": "برمجة,تقنية",
+      "image_url": "https://picsum.photos/id/1/800/600",
+      "video_url": null,
+      "likes_count": 12,
+      "comments_count": 4,
+      "retweet_count": 5,
+      "view_count": 230,
+      "is_retweet": false,
+      "retweet_of": null,
+      "quote_text": null,
+      "created_at": "2026-06-03T10:30:00.000Z"
+    },
+    {
+      "id": 3,
+      "author_id": 3,
+      "author": "نور",
+      "title": "خواطر مسائية ✨",
+      "content": "وفي الليل سكون يخترقه نبض القلم، أكتب علّني أجد بعض السلام...",
+      "tags": "أدب,خواطر",
+      "image_url": "https://picsum.photos/id/1040/800/600",
+      "video_url": null,
+      "likes_count": 8,
+      "comments_count": 2,
+      "retweet_count": 1,
+      "view_count": 95,
+      "is_retweet": false,
+      "retweet_of": null,
+      "quote_text": null,
+      "created_at": "2026-06-03T10:40:00.000Z"
+    },
+    {
+      "id": 4,
+      "author_id": 4,
+      "author": "سامر",
+      "title": "لقطة من أعالي الجبال 🏔️",
+      "content": "شارككم هذه الصورة من رحلتي الأخيرة إلى جبال الألب، الطبيعة هنا ساحرة!",
+      "tags": "تصوير,طبيعة",
+      "image_url": "https://picsum.photos/id/1018/800/600",
+      "video_url": null,
+      "likes_count": 18,
+      "comments_count": 5,
+      "retweet_count": 3,
+      "view_count": 310,
+      "is_retweet": false,
+      "retweet_of": null,
+      "quote_text": null,
+      "created_at": "2026-06-03T10:50:00.000Z"
+    },
+    {
+      "id": 5,
+      "author_id": 1,
+      "author": "زائر",
+      "title": "أعيد تغريد: نصائح البرمجة",
+      "content": "هذه النصائح مهمة لكل مبتدئ 👍",
+      "tags": "برمجة",
       "image_url": "",
-      "likes_count": 5,
+      "video_url": null,
+      "likes_count": 0,
+      "comments_count": 0,
+      "retweet_count": 0,
+      "view_count": 12,
+      "is_retweet": true,
+      "retweet_of": 2,
+      "quote_text": "هذه النصائح مهمة لكل مبتدئ 👍",
+      "created_at": "2026-06-03T11:00:00.000Z"
+    },
+    {
+      "id": 6,
+      "author_id": 2,
+      "author": "احمد",
+      "title": "فيديو تجريبي: شرح قاعدة بيانات",
+      "content": "شاهدوا هذا الفيديو القصير عن أساسيات قواعد البيانات.",
+      "tags": "تقنية,فيديو",
+      "image_url": "",
+      "video_url": "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
+      "likes_count": 7,
       "comments_count": 1,
-      "created_at": "2025-03-20T13:00:00Z"
+      "retweet_count": 0,
+      "view_count": 45,
+      "is_retweet": false,
+      "retweet_of": null,
+      "quote_text": null,
+      "created_at": "2026-06-03T11:10:00.000Z"
     }
   ],
-  "likes": [],
-  "comments": [],
-  "bookmarks": []
+  "likes": [
+    { "post_id": 1, "user_id": 2, "created_at": "2026-06-03T10:25:00.000Z" },
+    { "post_id": 1, "user_id": 3, "created_at": "2026-06-03T10:26:00.000Z" },
+    { "post_id": 2, "user_id": 1, "created_at": "2026-06-03T10:35:00.000Z" },
+    { "post_id": 2, "user_id": 3, "created_at": "2026-06-03T10:36:00.000Z" },
+    { "post_id": 3, "user_id": 1, "created_at": "2026-06-03T10:45:00.000Z" },
+    { "post_id": 4, "user_id": 1, "created_at": "2026-06-03T10:55:00.000Z" },
+    { "post_id": 4, "user_id": 2, "created_at": "2026-06-03T10:56:00.000Z" }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "post_id": 1,
+      "user_id": 2,
+      "body": "مبادرة رائعة، أتمنى لكم التوفيق!",
+      "created_at": "2026-06-03T10:25:00.000Z"
+    },
+    {
+      "id": 2,
+      "post_id": 1,
+      "user_id": 3,
+      "body": "سعيدة بوجودي هنا 😍",
+      "created_at": "2026-06-03T10:26:00.000Z"
+    },
+    {
+      "id": 3,
+      "post_id": 2,
+      "user_id": 1,
+      "body": "نصائح قيمة جداً، شكراً أحمد",
+      "created_at": "2026-06-03T10:36:00.000Z"
+    },
+    {
+      "id": 4,
+      "post_id": 2,
+      "user_id": 3,
+      "body": "أوافق بشدة على النقطة الرابعة 👍",
+      "created_at": "2026-06-03T10:37:00.000Z"
+    },
+    {
+      "id": 5,
+      "post_id": 4,
+      "user_id": 1,
+      "body": "صورة رائعة! ما نوع الكاميرا المستخدمة؟",
+      "created_at": "2026-06-03T10:56:00.000Z"
+    }
+  ],
+  "bookmarks": [
+    { "post_id": 2, "user_id": 1, "created_at": "2026-06-03T10:38:00.000Z" },
+    { "post_id": 4, "user_id": 1, "created_at": "2026-06-03T10:57:00.000Z" }
+  ],
+  "follows": [
+    { "id": 1, "follower_id": 1, "following_id": 2, "created_at": "2026-06-03T10:22:00.000Z" },
+    { "id": 2, "follower_id": 1, "following_id": 3, "created_at": "2026-06-03T10:23:00.000Z" },
+    { "id": 3, "follower_id": 2, "following_id": 1, "created_at": "2026-06-03T10:33:00.000Z" },
+    { "id": 4, "follower_id": 3, "following_id": 1, "created_at": "2026-06-03T10:44:00.000Z" },
+    { "id": 5, "follower_id": 4, "following_id": 1, "created_at": "2026-06-03T10:54:00.000Z" }
+  ],
+  "notifications": [
+    {
+      "id": 1717400000001,
+      "user_id": 1,
+      "type": "follows",
+      "message": "احمد بدأ بمتابعتك",
+      "related_id": null,
+      "read": false,
+      "created_at": "2026-06-03T10:33:00.000Z"
+    },
+    {
+      "id": 1717400000002,
+      "user_id": 1,
+      "type": "likes",
+      "message": "احمد أعجب بمنشورك 'مرحباً بكم'",
+      "related_id": 1,
+      "read": false,
+      "created_at": "2026-06-03T10:25:00.000Z"
+    },
+    {
+      "id": 1717400000003,
+      "user_id": 2,
+      "type": "retweets",
+      "message": "زائر أعاد تغريد منشورك 'نصائح البرمجة'",
+      "related_id": 5,
+      "read": false,
+      "created_at": "2026-06-03T11:00:00.000Z"
+    },
+    {
+      "id": 1717400000004,
+      "user_id": 1,
+      "type": "comments",
+      "message": "نور علّقت على منشورك 'مرحباً بكم'",
+      "related_id": 1,
+      "read": false,
+      "created_at": "2026-06-03T10:26:00.000Z"
+    }
+  ],
+  "stories": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "username": "زائر",
+      "avatar": "https://i.pravatar.cc/150?u=zair",
+      "image_url": "https://picsum.photos/id/237/600/1000",
+      "views": 0,
+      "created_at": "2026-06-03T10:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "username": "احمد",
+      "avatar": "https://i.pravatar.cc/150?u=ahmed",
+      "image_url": "https://picsum.photos/id/200/600/1000",
+      "views": 0,
+      "created_at": "2026-06-03T10:05:00.000Z"
+    },
+    {
+      "id": 3,
+      "user_id": 3,
+      "username": "نور",
+      "avatar": "https://i.pravatar.cc/150?u=noor",
+      "image_url": "https://picsum.photos/id/24/600/1000",
+      "views": 0,
+      "created_at": "2026-06-03T10:10:00.000Z"
+    }
+  ],
+  "conversations": [
+    {
+      "id": 1,
+      "user1_id": 1,
+      "user2_id": 2,
+      "last_message": "شكراً على النصائح!",
+      "last_time": "2026-06-03T11:30:00.000Z",
+      "created_at": "2026-06-03T11:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "user1_id": 1,
+      "user2_id": 3,
+      "last_message": "أحببت خاطرتك الأخيرة",
+      "last_time": "2026-06-03T11:45:00.000Z",
+      "created_at": "2026-06-03T11:15:00.000Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "conversation_id": 1,
+      "sender_id": 1,
+      "body": "مرحباً أحمد، كيف حالك؟",
+      "created_at": "2026-06-03T11:10:00.000Z"
+    },
+    {
+      "id": 2,
+      "conversation_id": 1,
+      "sender_id": 2,
+      "body": "أهلاً زائر، الحمد لله، ماذا عنك؟",
+      "created_at": "2026-06-03T11:15:00.000Z"
+    },
+    {
+      "id": 3,
+      "conversation_id": 1,
+      "sender_id": 1,
+      "body": "شكراً على النصائح!",
+      "created_at": "2026-06-03T11:30:00.000Z"
+    },
+    {
+      "id": 4,
+      "conversation_id": 2,
+      "sender_id": 1,
+      "body": "نور، كتاباتك رائعة",
+      "created_at": "2026-06-03T11:35:00.000Z"
+    },
+    {
+      "id": 5,
+      "conversation_id": 2,
+      "sender_id": 3,
+      "body": "شكراً جزيلاً، كلماتك تسعدني",
+      "created_at": "2026-06-03T11:40:00.000Z"
+    },
+    {
+      "id": 6,
+      "conversation_id": 2,
+      "sender_id": 1,
+      "body": "أحببت خاطرتك الأخيرة",
+      "created_at": "2026-06-03T11:45:00.000Z"
+    }
+  ],
+  "gifts": [
+    {
+      "id": 1,
+      "sender_id": 2,
+      "receiver_id": 1,
+      "post_id": 1,
+      "gift_type": "heart",
+      "gift_name": "❤️ قلب",
+      "cost": 20,
+      "created_at": "2026-06-03T12:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "sender_id": 3,
+      "receiver_id": 1,
+      "post_id": 1,
+      "gift_type": "star",
+      "gift_name": "⭐ نجمة",
+      "cost": 30,
+      "created_at": "2026-06-03T12:05:00.000Z"
+    }
+  ],
+  "views": []
 }
