@@ -1,0 +1,45 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "زائر",
+      "password": "123",
+      "created_at": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "username": "احمد",
+      "password": "123",
+      "created_at": "2025-01-02T11:00:00Z"
+    }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "author_id": 1,
+      "author": "زائر",
+      "title": "مرحباً بكم في منشوراتي",
+      "content": "هذا أول منشور تجريبي",
+      "tags": "ترحيب",
+      "image_url": "",
+      "likes_count": 3,
+      "comments_count": 2,
+      "created_at": "2025-03-20T12:00:00Z"
+    },
+    {
+      "id": 2,
+      "author_id": 2,
+      "author": "احمد",
+      "title": "تجربة جديدة",
+      "content": "هذا منشور من أحمد",
+      "tags": "تجربة",
+      "image_url": "",
+      "likes_count": 5,
+      "comments_count": 1,
+      "created_at": "2025-03-20T13:00:00Z"
+    }
+  ],
+  "likes": [],
+  "comments": [],
+  "bookmarks": []
+}
