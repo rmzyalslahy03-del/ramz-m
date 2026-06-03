@@ -2,402 +2,280 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>منشوراتي | منصة اجتماعية ذكية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>منشوراتي | شبكة اجتماعية متكاملة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="common.css">
 </head>
 <body>
 
-<nav class="navbar">
-    <div class="logo"><i class="fas fa-feather-alt"></i><span>منشوراتي</span></div>
-    <div style="display:flex; align-items:center; gap:12px;">
-        <div class="search-wrapper"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="ابحث عن منشور..."></div>
-        <div class="user-area" id="userArea"><button id="authBtn" class="btn">دخول</button></div>
-    </div>
-</nav>
+    <!-- ========== HEADER ========== -->
+    <nav class="navbar">
+        <div class="logo" onclick="showScreen('home')">
+            <div class="logo-icon"><i class="fas fa-feather-alt"></i></div>
+            <span class="logo-text">منشوراتي</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="ابحث عن منشور...">
+            </div>
+            <div class="header-actions">
+                <button class="header-btn" id="notificationsBtn" title="الإشعارات">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge-dot" id="notifBadge" style="display:none;"></span>
+                </button>
+                <button class="header-btn" id="darkModeToggle" title="تغيير المظهر">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+            <div class="user-area" id="userArea">
+                <button id="authBtn" class="btn">دخول</button>
+            </div>
+        </div>
+    </nav>
 
-<main>
-    <div id="recommendedSection" style="display:none;">
-        <h3 class="section-title"><i class="fas fa-magic"></i> مقترحات لك</h3>
-        <div class="recommended-row" id="recommendedRow"></div>
-    </div>
-    <div class="feed-container" id="feedContainer"><div class="empty-state">جاري التحميل...</div></div>
-    <button class="btn load-more-btn" id="loadMoreBtn" style="display:none;">تحميل المزيد</button>
-</main>
+    <!-- ========== المحتوى الرئيسي ========== -->
+    <main>
+        <!-- الشاشة الرئيسية -->
+        <div id="homeScreen">
+            <div class="stories-container" id="storiesContainer"></div>
+            <div id="recommendedSection" style="display:none;">
+                <h3 class="section-title"><i class="fas fa-magic"></i> مقترحات لك</h3>
+                <div class="recommended-row" id="recommendedRow"></div>
+            </div>
+            <div class="feed-container" id="feedContainer">
+                <div class="loading-spinner"><i class="fas fa-spinner fa-pulse"></i> جاري التحميل...</div>
+            </div>
+            <button class="btn load-more-btn" id="loadMoreBtn" style="display:none;">تحميل المزيد</button>
+        </div>
 
-<div class="bottom-nav">
-    <div class="nav-item active" data-page="home"><i class="fas fa-home"></i><span>الرئيسية</span></div>
-    <div class="nav-item" data-page="friends"><i class="fas fa-user-friends"></i><span>الأصدقاء</span></div>
-    <div class="nav-item" data-page="create"><i class="fas fa-plus-circle"></i><span>إنشاء</span></div>
-    <div class="nav-item" data-page="inbox"><i class="fas fa-inbox"></i><span>محفوظات</span></div>
-    <div class="nav-item" data-page="profile"><i class="fas fa-user"></i><span>حسابي</span></div>
-</div>
+        <!-- شاشة الملف الشخصي -->
+        <div id="profileScreen" style="display:none;">
+            <div id="profileHeader" class="profile-header"></div>
+            <div id="profilePosts" class="feed-container"></div>
+        </div>
 
-<div class="toast" id="toast"></div>
-
-<div id="authModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal">&times;</span>
-        <h3 id="authModalTitle">تسجيل الدخول</h3>
-        <input type="text" id="authUsername" placeholder="اسم المستخدم">
-        <input type="password" id="authPassword" placeholder="كلمة المرور">
-        <button id="authSubmitBtn">دخول</button>
-        <p style="text-align:center; margin-top:1rem;"><a href="#" id="switchAuthMode">إنشاء حساب جديد</a></p>
-    </div>
-</div>
-
-<div id="postModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal">&times;</span>
-        <h3>✍️ مقال جديد</h3>
-        <input type="text" id="postTitle" placeholder="عنوان المقال">
-        <textarea id="postText" rows="5" placeholder="محتوى المقال..." maxlength="2000" oninput="updateCharCount()"></textarea>
-        <div class="char-count" id="charCount">0 / 2000</div>
-        <input type="text" id="postTags" placeholder="وسوم (مفصولة بفواصل)">
-        <input type="file" id="postImageFile" accept="image/*">
-        <img id="imagePreview" class="image-preview">
-        <button id="publishBtn" class="btn">نشر</button>
-        <div id="previewArea" style="display:none; margin-top:1rem; border:1px solid #e2e8f0; border-radius:1rem; padding:1rem;"></div>
-    </div>
-</div>
-
-<div id="commentsModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal">&times;</span>
-        <h3>💬 التعليقات</h3>
-        <div id="commentsList" style="max-height:300px; overflow-y:auto; margin:1rem 0;"></div>
-        <textarea id="newCommentBody" placeholder="أضف تعليقاً..."></textarea>
-        <button id="addCommentBtn">إرسال</button>
-    </div>
-</div>
-
-<script src="common.js"></script>
-<script>
-    // ========== متغيرات التطبيق ==========
-    let currentUser = getCurrentUser();
-    let currentPage = 0;
-    let allPostsLoaded = false;
-    const POSTS_PER_PAGE = 8;
-    let authMode = 'login';
-    let currentPostIdForComments = null;
-    let allPosts = [];
-
-    // تحديث واجهة المستخدم بناءً على حالة تسجيل الدخول
-    function updateUserUI() {
-        const area = document.getElementById('userArea');
-        if (currentUser) {
-            area.innerHTML = `
-                <div class="user-menu" id="userMenu">
-                    <i class="fas fa-user-circle" style="font-size:1.5rem;"></i>
-                    <span>${escapeHtml(currentUser.username)}</span>
-                    <div class="dropdown"><a href="#" id="logoutLink">تسجيل الخروج</a></div>
-                </div>`;
-            const userMenu = document.getElementById('userMenu');
-            userMenu.addEventListener('click', (e) => { e.currentTarget.classList.toggle('active'); });
-            document.getElementById('logoutLink').addEventListener('click', (e) => { e.preventDefault(); logout(); });
-        } else {
-            area.innerHTML = `<button id="authBtn" class="btn">دخول</button>`;
-            document.getElementById('authBtn').addEventListener('click', openAuthModal);
-        }
-    }
-
-    function openAuthModal() {
-        document.getElementById('authModal').style.display = 'flex';
-        authMode = 'login';
-        document.getElementById('authModalTitle').textContent = 'تسجيل الدخول';
-        document.getElementById('authSubmitBtn').textContent = 'دخول';
-        document.getElementById('switchAuthMode').textContent = 'إنشاء حساب جديد';
-    }
-
-    document.getElementById('switchAuthMode').addEventListener('click', (e) => {
-        e.preventDefault();
-        authMode = authMode === 'login' ? 'register' : 'login';
-        document.getElementById('authModalTitle').textContent = authMode === 'register' ? 'إنشاء حساب' : 'تسجيل الدخول';
-        document.getElementById('authSubmitBtn').textContent = authMode === 'register' ? 'تسجيل' : 'دخول';
-        document.getElementById('switchAuthMode').textContent = authMode === 'register' ? 'تسجيل الدخول' : 'إنشاء حساب جديد';
-    });
-
-    document.getElementById('authSubmitBtn').addEventListener('click', async () => {
-        const username = document.getElementById('authUsername').value.trim();
-        const password = document.getElementById('authPassword').value;
-        if (!username || !password) {
-            showToast('⚠️ يرجى ملء جميع الحقول', true);
-            return;
-        }
-        try {
-            if (authMode === 'register') {
-                await registerUser(username, password);
-                showToast('✅ تم التسجيل');
-            } else {
-                const user = await loginUser(username, password);
-                if (!user) throw new Error('بيانات غير صحيحة');
-                showToast('✅ تم تسجيل الدخول');
-            }
-            currentUser = getCurrentUser();
-            updateUserUI();
-            document.getElementById('authModal').style.display = 'none';
-            resetAndLoadFeed();
-        } catch (err) {
-            showToast(err.message, true);
-        }
-    });
-
-    async function renderPosts(postsArr, append = false) {
-        const container = document.getElementById('feedContainer');
-        if (!append) container.innerHTML = '';
-        let html = '';
-        for (const post of postsArr) {
-            const liked = currentUser ? await hasLiked(post.id, currentUser.id) : false;
-            const bookmarked = currentUser ? await hasBookmarked(post.id, currentUser.id) : false;
-            const tagsHtml = post.tags ? post.tags.split(',').map(t => `<span class="tag">${escapeHtml(t.trim())}</span>`).join('') : '';
-            html += `
-            <div class="post-card" data-post-id="${post.id}">
-                <div class="post-header">
-                    <div class="author-avatar">${escapeHtml(post.author?.[0] || 'ز')}</div>
-                    <div class="author-info">
-                        <div class="author-name">${escapeHtml(post.author || 'زائر')}</div>
-                        <div class="post-date">${new Date(post.created_at).toLocaleDateString('ar-SA')}</div>
+        <!-- شاشة الإنشاء -->
+        <div id="createScreen" style="display:none;">
+            <div class="top-bar">
+                <button class="top-btn" data-tool="url"><i class="fas fa-link"></i> رابط</button>
+                <button class="top-btn" data-tool="camera"><i class="fas fa-camera"></i> كاميرا</button>
+                <button class="top-btn" data-tool="edit-image"><i class="fas fa-edit"></i> تعديل</button>
+                <button class="top-btn" data-tool="ai-article"><i class="fas fa-robot"></i> مقال AI</button>
+                <button class="top-btn" data-tool="ai-image-gen"><i class="fas fa-palette"></i> صورة AI</button>
+                <button class="top-btn" data-tool="translate"><i class="fas fa-language"></i> ترجمة</button>
+                <button class="top-btn" data-tool="poll"><i class="fas fa-chart-simple"></i> استبيان</button>
+                <button class="top-btn" data-tool="location"><i class="fas fa-location-dot"></i> موقع</button>
+                <button class="top-btn" data-tool="challenge"><i class="fas fa-trophy"></i> تحدي</button>
+                <button class="top-btn" data-tool="filters"><i class="fas fa-filter"></i> فلاتر</button>
+            </div>
+            <div class="container">
+                <h2 style="color:#fff;margin-bottom:0.8rem;"><i class="fas fa-plus-circle"></i> منشور جديد</h2>
+                <div class="form-group">
+                    <label>العنوان *</label>
+                    <input type="text" id="postTitle" placeholder="أدخل عنوان المنشور...">
+                </div>
+                <div class="form-group">
+                    <label>المحتوى *</label>
+                    <div class="rich-editor">
+                        <div class="editor-toolbar">
+                            <button class="tool-btn" data-cmd="bold"><i class="fas fa-bold"></i></button>
+                            <button class="tool-btn" data-cmd="italic"><i class="fas fa-italic"></i></button>
+                            <button class="tool-btn" data-cmd="underline"><i class="fas fa-underline"></i></button>
+                            <button class="tool-btn" data-cmd="insertUnorderedList"><i class="fas fa-list-ul"></i></button>
+                            <button class="tool-btn" data-cmd="createLink"><i class="fas fa-link"></i></button>
+                            <input type="color" id="textColor" style="width:28px;height:28px;border-radius:50%;border:1px solid #555;cursor:pointer;" title="لون النص">
+                        </div>
+                        <div id="editorContent" class="editor-content" contenteditable="true" placeholder="اكتب محتوى منشورك هنا..."></div>
                     </div>
                 </div>
-                ${post.image_url ? `<img class="post-image" src="${post.image_url}">` : ''}
-                <div class="post-content">
-                    <div class="post-title">${escapeHtml(post.title)}</div>
-                    <div class="post-text">${escapeHtml(post.content)}</div>
-                    ${tagsHtml ? `<div class="post-tags">${tagsHtml}</div>` : ''}
+                <div class="form-group">
+                    <label>صورة المنشور</label>
+                    <input type="file" id="postImageFile" accept="image/*">
+                    <img id="imagePreview" class="image-preview" alt="معاينة">
                 </div>
-                <div class="action-bar">
-                    <button class="action-btn like-btn ${liked ? 'liked' : ''}" data-id="${post.id}">
-                        <i class="${liked ? 'fas' : 'far'} fa-heart"></i> <span class="count">${formatNumber(post.likes_count || 0)}</span>
-                    </button>
-                    <button class="action-btn comment-btn" data-id="${post.id}">
-                        <i class="far fa-comment"></i> <span>${post.comments_count || 0}</span>
-                    </button>
-                    <button class="action-btn bookmark-btn ${bookmarked ? 'bookmarked' : ''}" data-id="${post.id}">
-                        <i class="${bookmarked ? 'fas' : 'far'} fa-bookmark"></i>
-                    </button>
+                <div class="form-group">
+                    <label>هاشتاج</label>
+                    <input type="text" id="postHashtag" placeholder="بدون #" maxlength="80">
                 </div>
-            </div>`;
-        }
-        if (append) container.insertAdjacentHTML('beforeend', html);
-        else container.innerHTML = html;
-        attachEvents();
-    }
+                <div class="form-group">
+                    <label>التصنيف</label>
+                    <select id="postCategory">
+                        <option>أخبار</option><option>رياضة</option><option>تعليم</option><option>سياحة</option>
+                        <option>تقنية</option><option>فن</option><option>طعام</option><option>أزياء</option>
+                        <option>صحة</option><option>أخرى</option>
+                    </select>
+                </div>
+                <div id="pollContainer"></div>
+                <div id="challengeContainer"></div>
+                <div class="buttons">
+                    <button class="btn-publish" id="publishBtn"><i class="fas fa-paper-plane"></i> نشر</button>
+                    <button class="btn-draft" id="draftBtn"><i class="fas fa-save"></i> مسودة</button>
+                    <button class="btn-drafts" id="showDraftsBtn"><i class="fas fa-list"></i> المسودات</button>
+                    <button class="btn-back" id="backFromCreateBtn"><i class="fas fa-arrow-right"></i> رجوع</button>
+                </div>
+            </div>
+        </div>
 
-    function attachEvents() {
-        document.querySelectorAll('.like-btn').forEach(btn => btn.addEventListener('click', handleLike));
-        document.querySelectorAll('.comment-btn').forEach(btn => btn.addEventListener('click', openCommentsModal));
-        document.querySelectorAll('.bookmark-btn').forEach(btn => btn.addEventListener('click', handleBookmark));
-    }
+        <!-- شاشة المحادثات -->
+        <div id="messagesScreen" style="display:none;">
+            <div id="conversationsList" class="conversations-list"></div>
+            <div id="chatView" class="chat-view" style="display:none;">
+                <div class="chat-header">
+                    <button id="backToConversations" class="btn btn-back"><i class="fas fa-arrow-right"></i></button>
+                    <span id="chatPartnerName"></span>
+                </div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input">
+                    <input type="text" id="messageInput" placeholder="اكتب رسالتك...">
+                    <button id="sendMessageBtn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
 
-    async function handleLike(e) {
-        if (!currentUser) { showToast('⚠️ يجب تسجيل الدخول', true); return; }
-        const btn = e.currentTarget;
-        const postId = parseInt(btn.dataset.id);
-        const newLiked = await toggleLike(postId, currentUser.id);
-        if (newLiked) {
-            btn.classList.add('liked');
-            btn.querySelector('i').className = 'fas fa-heart';
-        } else {
-            btn.classList.remove('liked');
-            btn.querySelector('i').className = 'far fa-heart';
-        }
-        const updatedPost = await apiRequest(`posts/${postId}`);
-        btn.querySelector('.count').textContent = formatNumber(updatedPost.likes_count);
-    }
+        <!-- شاشة الإعدادات -->
+        <div id="settingsScreen" style="display:none;">
+            <h3 style="color:#fff; margin:1rem;">⚙️ الإعدادات</h3>
+            <div class="settings-section">
+                <h4>الملف الشخصي</h4>
+                <label>الاسم</label><input type="text" id="settingsName">
+                <label>النبذة</label><textarea id="settingsBio"></textarea>
+                <label>صورة الملف</label><input type="file" id="settingsAvatar" accept="image/*">
+                <img id="settingsAvatarPreview" class="image-preview">
+            </div>
+            <div class="settings-section">
+                <h4>التفضيلات</h4>
+                <label>المظهر</label>
+                <select id="settingsTheme"><option value="light">فاتح</option><option value="dark">داكن</option></select>
+                <label>الخصوصية</label>
+                <select id="settingsPrivacy"><option value="public">عام</option><option value="followers">المتابعون فقط</option></select>
+            </div>
+            <div class="settings-section">
+                <h4>الإشعارات</h4>
+                <label><input type="checkbox" id="notifLikes"> الإعجابات</label>
+                <label><input type="checkbox" id="notifComments"> التعليقات</label>
+                <label><input type="checkbox" id="notifFollows"> المتابعات</label>
+                <label><input type="checkbox" id="notifRetweets"> إعادة التغريد</label>
+                <label><input type="checkbox" id="notifGifts"> الهدايا</label>
+            </div>
+            <div class="settings-section">
+                <h4>تغيير كلمة المرور</h4>
+                <input type="password" id="settingsNewPassword" placeholder="كلمة مرور جديدة">
+            </div>
+            <button id="saveSettingsBtn" class="btn">💾 حفظ الإعدادات</button>
+            <div style="color:#fff; margin:1rem;">💰 رصيدك: <span id="settingsCoins"></span> عملة</div>
+        </div>
 
-    async function handleBookmark(e) {
-        if (!currentUser) { showToast('⚠️ يجب تسجيل الدخول', true); return; }
-        const btn = e.currentTarget;
-        const postId = parseInt(btn.dataset.id);
-        const newBookmarked = await toggleBookmark(postId, currentUser.id);
-        if (newBookmarked) {
-            btn.classList.add('bookmarked');
-            btn.querySelector('i').className = 'fas fa-bookmark';
-        } else {
-            btn.classList.remove('bookmarked');
-            btn.querySelector('i').className = 'far fa-bookmark';
-        }
-    }
+        <!-- شاشة الريلز -->
+        <div id="reelsScreen" style="display:none;">
+            <h3 style="color:#fff; margin:1rem;">🎬 الريلز</h3>
+            <div class="reels-container" id="reelsContainer"></div>
+        </div>
 
-    async function openCommentsModal(e) {
-        if (!currentUser) { showToast('⚠️ سجل الدخول', true); return; }
-        const postId = parseInt(e.currentTarget.dataset.id);
-        currentPostIdForComments = postId;
-        const comments = await getComments(postId);
-        const users = await apiRequest('users');
-        const commentsHtml = comments.map(c => {
-            const commenter = users.find(u => u.id === c.user_id);
-            return `<div style="padding:0.5rem;border-bottom:1px solid #e2e8f0;"><strong>${escapeHtml(commenter?.username || 'مستخدم')}</strong>: ${escapeHtml(c.body)}</div>`;
-        }).join('');
-        document.getElementById('commentsList').innerHTML = commentsHtml || '<div class="empty-state">لا توجد تعليقات</div>';
-        document.getElementById('commentsModal').style.display = 'flex';
-    }
+        <!-- شاشة الإشعارات -->
+        <div id="notificationsScreen" style="display:none;">
+            <h3 style="color:#fff; margin:1rem;">🔔 الإشعارات</h3>
+            <div id="notificationsList"></div>
+        </div>
+    </main>
 
-    document.getElementById('addCommentBtn').addEventListener('click', async () => {
-        if (!currentUser || !currentPostIdForComments) return;
-        const body = document.getElementById('newCommentBody').value.trim();
-        if (!body) { showToast('⚠️ اكتب تعليقاً', true); return; }
-        await addComment(currentPostIdForComments, currentUser.id, body);
-        document.getElementById('newCommentBody').value = '';
-        const comments = await getComments(currentPostIdForComments);
-        const users = await apiRequest('users');
-        const commentsHtml = comments.map(c => {
-            const commenter = users.find(u => u.id === c.user_id);
-            return `<div style="padding:0.5rem;border-bottom:1px solid #e2e8f0;"><strong>${escapeHtml(commenter?.username || 'مستخدم')}</strong>: ${escapeHtml(c.body)}</div>`;
-        }).join('');
-        document.getElementById('commentsList').innerHTML = commentsHtml;
-        const updatedPost = await apiRequest(`posts/${currentPostIdForComments}`);
-        const commentBtn = document.querySelector(`.comment-btn[data-id="${currentPostIdForComments}"] span`);
-        if (commentBtn) commentBtn.textContent = updatedPost.comments_count;
-        showToast('✅ تم إضافة التعليق');
-    });
+    <!-- ========== شريط التنقل السفلي ========== -->
+    <div class="bottom-nav">
+        <div class="nav-item active" data-screen="home"><i class="fas fa-home"></i><span>الرئيسية</span></div>
+        <div class="nav-item" data-screen="messages"><i class="fas fa-comments"></i><span>الرسائل</span></div>
+        <div class="nav-item" data-screen="create"><i class="fas fa-plus-circle"></i><span>إنشاء</span></div>
+        <div class="nav-item" data-screen="reels"><i class="fas fa-film"></i><span>ريلز</span></div>
+        <div class="nav-item" data-screen="profile"><i class="fas fa-user"></i><span>حسابي</span></div>
+    </div>
 
-    async function loadMorePosts() {
-        if (allPostsLoaded) return;
-        const start = currentPage * POSTS_PER_PAGE;
-        const end = start + POSTS_PER_PAGE;
-        const morePosts = allPosts.slice(start, end);
-        if (morePosts.length === 0) {
-            allPostsLoaded = true;
-            document.getElementById('loadMoreBtn').style.display = 'none';
-            return;
-        }
-        await renderPosts(morePosts, true);
-        currentPage++;
-        if (currentPage * POSTS_PER_PAGE >= allPosts.length) {
-            allPostsLoaded = true;
-            document.getElementById('loadMoreBtn').style.display = 'none';
-        } else {
-            document.getElementById('loadMoreBtn').style.display = 'block';
-        }
-    }
+    <!-- ========== المودالات ========== -->
 
-    async function resetAndLoadFeed() {
-        currentPage = 0;
-        allPostsLoaded = false;
-        allPosts = await getPosts();
-        document.getElementById('feedContainer').innerHTML = '<div class="empty-state">جاري التحميل...</div>';
-        if (allPosts.length === 0) {
-            document.getElementById('feedContainer').innerHTML = '<div class="empty-state">📭 لا توجد منشورات بعد</div>';
-            allPostsLoaded = true;
-            return;
-        }
-        await renderPosts(allPosts.slice(0, POSTS_PER_PAGE), false);
-        currentPage = 1;
-        if (allPosts.length > POSTS_PER_PAGE) document.getElementById('loadMoreBtn').style.display = 'block';
-        else allPostsLoaded = true;
-        const recommended = allPosts.slice(0,4);
-        const recSection = document.getElementById('recommendedSection');
-        const recRow = document.getElementById('recommendedRow');
-        if (recommended.length) {
-            recSection.style.display = 'block';
-            recRow.innerHTML = recommended.map(p => `
-                <div class="rec-card" onclick="document.getElementById('searchInput').value=''; resetAndLoadFeed();">
-                    <div style="height:100px; background:url(${p.image_url || 'https://picsum.photos/400/200'}) center/cover; border-radius:0.8rem; margin-bottom:0.5rem;"></div>
-                    <div style="font-weight:700;">${escapeHtml(p.title)}</div>
-                    <div style="font-size:0.7rem;">${escapeHtml(p.author)}</div>
-                </div>`).join('');
-        } else {
-            recSection.style.display = 'none';
-        }
-    }
+    <!-- مودال المصادقة -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 id="authModalTitle">تسجيل الدخول</h3>
+            <input type="text" id="authUsername" placeholder="اسم المستخدم">
+            <input type="password" id="authPassword" placeholder="كلمة المرور">
+            <button id="authSubmitBtn">دخول</button>
+            <p style="text-align:center; margin-top:1rem;"><a href="#" id="switchAuthMode">إنشاء حساب جديد</a></p>
+        </div>
+    </div>
 
-    document.getElementById('searchInput').addEventListener('input', async (e) => {
-        const q = e.target.value.trim();
-        if (!q) { resetAndLoadFeed(); return; }
-        document.getElementById('loadMoreBtn').style.display = 'none';
-        const filtered = allPosts.filter(p => p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q) || p.author.toLowerCase().includes(q));
-        if (filtered.length) await renderPosts(filtered, false);
-        else document.getElementById('feedContainer').innerHTML = '<div class="empty-state">🔍 لا توجد نتائج</div>';
-    });
+    <!-- مودال التعليقات -->
+    <div id="commentSheet" class="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header"><span>💬 التعليقات</span><i class="fas fa-times" id="closeCommentSheet" style="cursor:pointer;"></i></div>
+        <div class="comments-list" id="commentsList"></div>
+        <div class="add-comment">
+            <input type="text" id="newCommentText" placeholder="أضف تعليقاً...">
+            <button id="submitCommentBtn" style="background:var(--primary);border:none;padding:8px 18px;border-radius:30px;color:#fff;font-weight:700;">إرسال</button>
+        </div>
+    </div>
+    <div id="commentOverlay" class="overlay"></div>
 
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', async () => {
-            const page = item.dataset.page;
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            item.classList.add('active');
-            if (page === 'home') resetAndLoadFeed();
-            else if (page === 'create') {
-                if (!currentUser) showToast('⚠️ سجل الدخول', true);
-                else document.getElementById('postModal').style.display = 'flex';
-            }
-            else if (page === 'inbox') {
-                if (!currentUser) showToast('⚠️ سجل الدخول', true);
-                else {
-                    const bookmarks = await apiRequest(`bookmarks?user_id=${currentUser.id}`);
-                    const bookmarkedPosts = allPosts.filter(p => bookmarks.some(b => b.post_id === p.id));
-                    if (bookmarkedPosts.length) await renderPosts(bookmarkedPosts, false);
-                    else document.getElementById('feedContainer').innerHTML = '<div class="empty-state">لا توجد محفوظات</div>';
-                    document.getElementById('loadMoreBtn').style.display = 'none';
-                }
-            }
-            else if (page === 'profile') {
-                if (!currentUser) showToast('⚠️ سجل الدخول', true);
-                else document.getElementById('feedContainer').innerHTML = `<div class="empty-state"><i class="fas fa-user-circle" style="font-size:3rem;"></i><h3>${escapeHtml(currentUser.username)}</h3><p>الملف الشخصي قيد التطوير</p></div>`;
-            }
-            else if (page === 'friends') {
-                document.getElementById('feedContainer').innerHTML = '<div class="empty-state">👥 صفحة الأصدقاء قيد التطوير</div>';
-            }
-        });
-    });
+    <!-- مودال إعادة التغريد -->
+    <div id="retweetModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>🔁 إعادة تغريد</h3>
+            <div id="retweetOriginalPreview" style="background:#f8fafc; border-radius:1rem; padding:1rem; margin:1rem 0; border:1px solid #e2e8f0;"></div>
+            <textarea id="retweetQuoteText" placeholder="أضف تعليقك (اختياري)..."></textarea>
+            <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+                <button id="retweetDirectBtn" class="btn" style="flex:1;">إعادة نشر مباشرة</button>
+                <button id="retweetQuoteBtn" class="btn" style="flex:1; background: #475569;">اقتباس</button>
+            </div>
+        </div>
+    </div>
 
-    document.getElementById('publishBtn').addEventListener('click', async () => {
-        if (!currentUser) { showToast('⚠️ سجل الدخول', true); return; }
-        const title = document.getElementById('postTitle').value.trim();
-        const content = document.getElementById('postText').value.trim();
-        const tags = document.getElementById('postTags').value.trim();
-        if (!title || !content) { showToast('⚠️ العنوان والمحتوى مطلوبان', true); return; }
-        let image_url = null;
-        const file = document.getElementById('postImageFile').files[0];
-        if (file) {
-            image_url = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.readAsDataURL(file);
-            });
-        }
-        await createPost({
-            author_id: currentUser.id,
-            author: currentUser.username,
-            title, content, tags: tags || null,
-            image_url,
-            likes_count: 0,
-            comments_count: 0,
-            created_at: new Date().toISOString()
-        });
-        document.getElementById('postModal').style.display = 'none';
-        document.getElementById('postTitle').value = '';
-        document.getElementById('postText').value = '';
-        document.getElementById('postTags').value = '';
-        document.getElementById('postImageFile').value = '';
-        document.getElementById('imagePreview').style.display = 'none';
-        document.getElementById('charCount').textContent = '0 / 2000';
-        showToast('✅ تم نشر المقال');
-        resetAndLoadFeed();
-    });
+    <!-- مودال الهدايا -->
+    <div id="giftsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>🎁 أرسل هدية</h3>
+            <p>رصيدك: <span id="giftSenderCoins"></span> عملة</p>
+            <div id="giftsGrid" class="gifts-grid"></div>
+        </div>
+    </div>
 
-    document.getElementById('postImageFile').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        const preview = document.getElementById('imagePreview');
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = ev => { preview.src = ev.target.result; preview.style.display = 'block'; };
-            reader.readAsDataURL(file);
-        } else preview.style.display = 'none';
-    });
+    <!-- مودال التنزيل -->
+    <div id="downloadSheet" class="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header"><span>📥 تنزيل</span><i class="fas fa-times" id="closeDownloadSheet" style="cursor:pointer;"></i></div>
+        <div style="padding:14px;text-align:center;">
+            <button id="downloadImageOption" style="background:var(--blue);color:#fff;padding:10px 20px;border-radius:30px;margin:6px;">🖼️ صورة</button>
+            <button id="downloadPdfOption" style="background:var(--primary);color:#fff;padding:10px 20px;border-radius:30px;margin:6px;">📄 PDF</button>
+        </div>
+    </div>
+    <div id="downloadOverlay" class="overlay"></div>
 
-    window.updateCharCount = function() {
-        document.getElementById('charCount').textContent = `${document.getElementById('postText').value.length} / 2000`;
-    };
+    <!-- مودال المسودات -->
+    <div id="draftsSheet" class="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header"><span>📝 مسوداتي</span><i id="closeDraftsSheet" class="fas fa-times" style="cursor:pointer;"></i></div>
+        <div id="draftsList" style="padding:10px;overflow-y:auto;flex:1;"></div>
+    </div>
+    <div id="draftsOverlay" class="overlay"></div>
 
-    document.getElementById('loadMoreBtn').addEventListener('click', loadMorePosts);
-    document.querySelectorAll('.close-modal').forEach(btn => btn.addEventListener('click', () => btn.closest('.modal').style.display = 'none'));
-    window.addEventListener('click', e => { if(e.target.classList.contains('modal')) e.target.style.display = 'none'; });
+    <!-- عارض القصص -->
+    <div id="storyViewer" class="story-viewer">
+        <div class="story-progress"><div class="story-progress-fill" id="storyProgressFill"></div></div>
+        <button class="story-close" id="closeStoryViewer"><i class="fas fa-times"></i></button>
+        <img id="storyImage" style="display:none;">
+        <video id="storyVideo" style="display:none;" autoplay playsinline></video>
+    </div>
 
-    updateUserUI();
-    resetAndLoadFeed();
-</script>
+    <!-- الإشعارات المنبثقة -->
+    <div id="globalToast"></div>
+    <div id="progressToast" class="progress-toast">
+        <span id="progressText">جاري التنفيذ...</span>
+        <div class="progress-bar"><div class="progress-fill" id="progressToastFill"></div></div>
+    </div>
+
+    <script src="common.js"></script>
 </body>
 </html>
