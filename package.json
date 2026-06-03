@@ -1,26 +1,24 @@
 {
-  "name": "manshoraty",
-  "version": "3.0.0",
-  "description": "منشوراتي - منصة اجتماعية عربية متكاملة تشمل التدوين، القصص، الريلز، المحادثات، الإشعارات، الهدايا والتجارة، إعدادات متقدمة، وتوصيات ذكية.",
+  "name": "ramz-x",
+  "version": "2.1.0",
+  "description": "Ramz-X - منصة اجتماعية عربية متكاملة (Production Ready)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"
   },
-  "keywords": [
-    "منشوراتي",
-    "شبكة اجتماعية",
-    "عربي",
-    "blog",
-    "social media",
-    "express",
-    "nodejs"
-  ],
-  "author": "Manshoraty Team",
-  "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.2.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^9.0.0"
   },
   "engines": {
     "node": ">=16.0.0"
