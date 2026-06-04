@@ -20,7 +20,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
-    <!-- Ramz-X Styles -->
     <link rel="stylesheet" href="common.css">
     <link rel="manifest" href="manifest.json">
 </head>
@@ -123,9 +122,8 @@
         <div class="notifications-list" id="notificationsList"></div>
     </div>
 
-    <!-- ========== شاشة صندوق الوارد والمحادثات (نمط تيك توك) ========== -->
+    <!-- ========== شاشة صندوق الوارد والمحادثات ========== -->
     <div id="inboxScreen" class="inbox-screen">
-        <!-- رأس الصفحة مع تبويبات -->
         <div class="inbox-header">
             <h2 style="font-weight:800; margin: 0 0 12px 0;">📥 صندوق الوارد</h2>
             <div class="inbox-tabs">
@@ -134,23 +132,14 @@
                 <button class="inbox-tab" data-inbox-tab="requests">الطلبات</button>
             </div>
         </div>
-
-        <!-- حاوية المحادثات -->
         <div id="inboxListView">
             <div class="search-input-area" style="margin: 12px 0;">
                 <input type="text" id="messageSearchInput" placeholder="🔍 بحث في المحادثات...">
             </div>
-            <ul class="inbox-list" id="inboxList">
-                <!-- تُملأ عبر JavaScript -->
-            </ul>
+            <ul class="inbox-list" id="inboxList"></ul>
             <button class="new-conversation-btn" onclick="startNewConversation()"><i class="fas fa-plus"></i> محادثة جديدة</button>
-            <div class="empty-state" id="inboxEmptyState" style="display:none;">
-                <i class="fas fa-comments"></i>
-                <p>لا توجد محادثات حالياً</p>
-            </div>
+            <div class="empty-state" id="inboxEmptyState" style="display:none;"><i class="fas fa-comments"></i><p>لا توجد محادثات حالياً</p></div>
         </div>
-
-        <!-- نافذة المحادثة (تظهر عند النقر) -->
         <div id="conversationView" class="conversation-view" style="display:none;">
             <div class="conv-header">
                 <button class="back-btn" onclick="showInboxList()"><i class="fas fa-arrow-right"></i></button>
@@ -251,7 +240,6 @@
         </button>
     </nav>
 
-    <!-- Ramz-X Script -->
     <script src="common.js"></script>
 </body>
 </html>
