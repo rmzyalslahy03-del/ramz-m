@@ -1,6 +1,22 @@
 // ==================== Ramz-X Common.js (Standalone API Version) ====================
 const API_BASE = window.location.origin;
 
+// ---------- كشف فشل Font Awesome (نظام احتياطي) ----------
+(function() {
+    var testIcon = document.createElement('i');
+    testIcon.className = 'fas fa-home';
+    testIcon.style.cssText = 'position:absolute;visibility:hidden;font-size:0;';
+    document.body.appendChild(testIcon);
+    var afterFont = window.getComputedStyle(testIcon, ':before').content;
+    document.body.removeChild(testIcon);
+    if (!afterFont || afterFont === 'none' || afterFont === '') {
+        document.body.classList.add('no-fontawesome');
+        console.warn('⚠️ Font Awesome لم يتحمّل، تم تفعيل الأيقونات الاحتياطية');
+    } else {
+        console.log('✅ Font Awesome محمّل بنجاح');
+    }
+})();
+
 // ---------- API Helper ----------
 function apiFetch(url, options = {}) {
     const token = localStorage.getItem('ramz_token');
@@ -890,24 +906,3 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-
-// ==================== Font Awesome Fallback (تحميل احتياطي) ====================
-(function loadFallbackFontAwesome() {
-    const fallbackTimeout = 3000; // انتظار 3 ثوانٍ
-
-    setTimeout(() => {
-        const testIcon = document.createElement('i');
-        testIcon.className = 'fas fa-heart';
-        testIcon.style.cssText = 'position:absolute;visibility:hidden;font-size:0;';
-        document.body.appendChild(testIcon);
-
-        const style = window.getComputedStyle(testIcon);
-        const fontFamily = style.getPropertyValue('font-family');
-        document.body.removeChild(testIcon);
-
-        if (!fontFamily.includes('Font Awesome')) {
-            document.body.classList.add('no-fontawesome');
-            console.warn('⚠️ فشل تحميل الخط المحلي، تم تفعيل الأيقونات الاحتياطية.');
-        }
-    }, fallbackTimeout);
-})();
