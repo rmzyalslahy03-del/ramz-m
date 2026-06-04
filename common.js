@@ -258,7 +258,7 @@ async function createStory() {
         if (!file) return;
         const formData = new FormData();
         formData.append('media', file);
-        await apiFetch('/api/stories', { method: 'POST', body: formData, headers: {} }); // no content-type
+        await apiFetch('/api/stories', { method: 'POST', body: formData, headers: {} });
         showToast('✅ تم نشر القصة');
         loadStories();
     };
@@ -532,10 +532,7 @@ async function addComment() {
         const formData = new FormData();
         const blob = await (await fetch(tempImage)).blob();
         formData.append('image', blob);
-        // for simplicity we upload via a separate endpoint, but our comment post doesn't support upload yet
-        // we will use a direct upload approach by posting FormData to the comment endpoint
-        // Since we have multer, we can send FormData directly
-        const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData, headers: { 'Authorization': `Bearer ${localStorage.getItem('ramz_token')}` } }); // Assume we add upload endpoint
+        const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData, headers: { 'Authorization': `Bearer ${localStorage.getItem('ramz_token')}` } });
         const uploadData = await uploadRes.json();
         imageUrl = uploadData.url;
     }
@@ -662,7 +659,7 @@ function togglePinConversation() {
 async function deleteConversation() {
     if (!currentConversation) return;
     if (!confirm('هل أنت متأكد من حذف هذه المحادثة؟')) return;
-    // we need delete endpoint; omitted for brevity but you can add
+    // حذف عبر API غير مطبق هنا، يمكن إضافته لاحقاً
     showToast('🗑️ محذوف');
     showInboxList();
 }
@@ -705,7 +702,6 @@ async function sendMessageText() {
 async function startNewConversation() {
     const username = prompt('أدخل اسم المستخدم للبدء بمحادثة:');
     if (!username) return;
-    // search user by username (we need a search endpoint)
     const res = await apiFetch(`/api/search?q=${encodeURIComponent(username)}`);
     const user = res.users?.[0];
     if (!user) { showToast('❌ المستخدم غير موجود'); return; }
@@ -791,7 +787,7 @@ async function publishPost() {
     if (schedule) formData.append('scheduled_at', schedule);
 
     try {
-        await apiFetch('/api/posts', { method: 'POST', body: formData, headers: {} }); // no content-type for FormData
+        await apiFetch('/api/posts', { method: 'POST', body: formData, headers: {} });
         showToast('🎉 تم النشر بنجاح');
         resetCreateForm();
         navigateTo('feed');
@@ -841,7 +837,6 @@ async function init() {
     const token = localStorage.getItem('ramz_token');
     if (token) {
         try {
-            // try to get current user from profile endpoint
             currentUser = JSON.parse(localStorage.getItem('ramz_user'));
             if (currentUser) {
                 updateProfileUI();
@@ -896,3 +891,38 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// ==================== Font Awesome Fallback (تحميل احتياطي) ====================
+(function loadFallbackFontAwesome() {
+    const TIMEOUT = 3000; // انتظار 3 ثوانٍ لتحميل CDN
+    const FALLBACK_URL = '/css/fontawesome.min.css'; // المسار المحلي للنسخة الاحتياطية
+
+    setTimeout(() => {
+        // فحص ما إذا كان Font Awesome محملاً فعلاً
+        const testIcon = document.createElement('i');
+        testIcon.className = 'fas fa-heart';
+        testIcon.style.cssText = 'position:absolute;visibility:hidden;font-size:0;';
+        document.body.appendChild(testIcon);
+        
+        const style = window.getComputedStyle(testIcon);
+        const fontFamily = style.getPropertyValue('font-family');
+        document.body.removeChild(testIcon);
+
+        // إذا لم يتم تحميل الخط (لا يحتوي "Font Awesome")
+        if (!fontFamily.includes('Font Awesome')) {
+            // 1. إضافة الكلاس الذي طلبته
+            document.body.classList.add('no-fontawesome');
+            
+            // 2. تحميل النسخة المحلية الاحتياطية
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = FALLBACK_URL;
+            link.onerror = function() {
+                console.error('لم يتم العثور على الملف الاحتياطي لـ Font Awesome.');
+            };
+            document.head.appendChild(link);
+            
+            console.warn('⚠️ فشل تحميل Font Awesome من CDN، تم التبديل إلى النسخة المحلية.');
+        }
+    }, TIMEOUT);
+})();
