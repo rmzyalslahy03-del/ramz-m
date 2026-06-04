@@ -16,7 +16,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'ramz-x-secret-key-change-in-production';
 const DB_PATH = path.join(__dirname, 'db.json');
-const UPLOADS_DIR = path.join(__dirname, 'public', 'uploads');
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
 
 // إنشاء مجلد الرفع إذا لم يكن موجوداً
 if (!fs.existsSync(UPLOADS_DIR)) {
@@ -43,7 +43,7 @@ app.use('/api/', limiter);
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname)); // يخدم الملفات من جذر المشروع (index.html, common.js, common.css)
 
 // إعداد multer لتخزين الملفات
 const storage = multer.diskStorage({
@@ -109,7 +109,7 @@ function seedDatabase(db) {
         password: bcrypt.hashSync('123456', 10),
         avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&size=200`,
         bio: `أنا ${name}، سعيد بوجودي في Ramz-X ✨`,
-        verified: index < 3,            // أول ثلاثة موثقون
+        verified: index < 3,
         top_contributor: index % 2 === 0,
         coins: 500 + index * 100,
         created_at: new Date(Date.now() - index * 3600000).toISOString()
@@ -828,7 +828,7 @@ app.post('/api/events/:id/attend', authMiddleware, (req, res) => {
 
 // ---------- Serve Frontend ----------
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // ---------- Start Server ----------
