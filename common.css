@@ -1618,3 +1618,27 @@ img[loading="lazy"].loaded {
     .action-btn i { font-size: 17px; }
     .action-btn .number { font-size: 10px; }
 }
+
+/* ==================== Font Awesome Fallback (أيقونات احتياطية) ==================== */
+body.no-fontawesome i.fa,
+body.no-fontawesome i.fas,
+body.no-fontawesome i.far,
+body.no-fontawesome i.fab,
+body.no-fontawesome i.fal,
+body.no-fontawesome i.fad {
+  font-family: 'Arial', 'Segoe UI Symbol', sans-serif !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+}
+
+body.no-fontawesome i.fa:empty::after {
+  content: '▣';
+  font-style: normal;
+  font-weight: normal;
+  color: inherit;
+}
+
+body.no-fontawesome i.fa {
+  letter-spacing: normal;
+  text-transform: none;
+}
