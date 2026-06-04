@@ -659,7 +659,6 @@ function togglePinConversation() {
 async function deleteConversation() {
     if (!currentConversation) return;
     if (!confirm('هل أنت متأكد من حذف هذه المحادثة؟')) return;
-    // حذف عبر API غير مطبق هنا، يمكن إضافته لاحقاً
     showToast('🗑️ محذوف');
     showInboxList();
 }
@@ -894,35 +893,21 @@ document.addEventListener('DOMContentLoaded', init);
 
 // ==================== Font Awesome Fallback (تحميل احتياطي) ====================
 (function loadFallbackFontAwesome() {
-    const TIMEOUT = 3000; // انتظار 3 ثوانٍ لتحميل CDN
-    const FALLBACK_URL = '/css/fontawesome.min.css'; // المسار المحلي للنسخة الاحتياطية
+    const fallbackTimeout = 3000; // انتظار 3 ثوانٍ
 
     setTimeout(() => {
-        // فحص ما إذا كان Font Awesome محملاً فعلاً
         const testIcon = document.createElement('i');
         testIcon.className = 'fas fa-heart';
         testIcon.style.cssText = 'position:absolute;visibility:hidden;font-size:0;';
         document.body.appendChild(testIcon);
-        
+
         const style = window.getComputedStyle(testIcon);
         const fontFamily = style.getPropertyValue('font-family');
         document.body.removeChild(testIcon);
 
-        // إذا لم يتم تحميل الخط (لا يحتوي "Font Awesome")
         if (!fontFamily.includes('Font Awesome')) {
-            // 1. إضافة الكلاس الذي طلبته
             document.body.classList.add('no-fontawesome');
-            
-            // 2. تحميل النسخة المحلية الاحتياطية
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = FALLBACK_URL;
-            link.onerror = function() {
-                console.error('لم يتم العثور على الملف الاحتياطي لـ Font Awesome.');
-            };
-            document.head.appendChild(link);
-            
-            console.warn('⚠️ فشل تحميل Font Awesome من CDN، تم التبديل إلى النسخة المحلية.');
+            console.warn('⚠️ فشل تحميل الخط المحلي، تم تفعيل الأيقونات الاحتياطية.');
         }
-    }, TIMEOUT);
+    }, fallbackTimeout);
 })();
