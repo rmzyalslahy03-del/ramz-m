@@ -1626,19 +1626,24 @@ body.no-fontawesome i.far,
 body.no-fontawesome i.fab,
 body.no-fontawesome i.fal,
 body.no-fontawesome i.fad {
-  font-family: 'Arial', 'Segoe UI Symbol', sans-serif !important;
-  font-style: normal !important;
-  font-weight: normal !important;
+    font-family: 'Arial', 'Segoe UI Symbol', sans-serif !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    visibility: visible !important;
 }
 
-body.no-fontawesome i.fa:empty::after {
-  content: '▣';
-  font-style: normal;
-  font-weight: normal;
-  color: inherit;
+body.no-fontawesome i.fa:before,
+body.no-fontawesome i.fas:before,
+body.no-fontawesome i.far:before,
+body.no-fontawesome i.fab:before {
+    content: '▣';
+    display: inline-block;
+    font-style: normal;
+    font-weight: normal;
+    color: inherit;
 }
 
 body.no-fontawesome i.fa {
-  letter-spacing: normal;
-  text-transform: none;
-}
+    letter-spacing: normal;
+    text-transform: none;
+                                  }
