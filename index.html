@@ -4,94 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
     <title>Ramz-X | المنصة الاجتماعية المتكاملة</title>
-    
-    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#ff0050">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Ramz-X">
     <link rel="apple-touch-icon" href="/icon-192.png">
-    
-    <!-- تحسين تحميل Font Awesome -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://use.fontawesome.com">
-    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    <link rel="dns-prefetch" href="https://use.fontawesome.com">
-    
-    <!-- Font Awesome - رابط مزدوج لضمان التحميل -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0-beta3/css/all.css">
-    
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    
-    <!-- الأنماط الرئيسية -->
     <link rel="stylesheet" href="common.css">
-    
-    <!-- Manifest (PWA) -->
     <link rel="manifest" href="manifest.json">
-    
-    <!-- إلغاء Service Worker مؤقتاً لضمان تحميل الأيقونات (يمكن تفعيله لاحقاً) -->
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for(let registration of registrations) {
-                    registration.unregister();
-                    console.log('تم إلغاء Service Worker مؤقتاً لتجنب مشاكل التخزين المؤقت');
-                }
+                for(let registration of registrations) registration.unregister();
             });
         }
     </script>
 </head>
 <body>
-
-    <!-- ========== شريط الهيدر ========== -->
     <div class="header">
         <div class="logo" onclick="navigateTo('feed')">Ramz-X</div>
         <div class="header-actions">
             <button class="icon-btn" onclick="navigateTo('search')"><i class="fas fa-search"></i></button>
             <button class="icon-btn" id="darkModeToggle"><i class="fas fa-moon"></i></button>
-            <button class="icon-btn" onclick="navigateTo('notifications')">
-                <i class="fas fa-bell"></i>
-                <span class="badge" id="notificationBadge" style="display:none;">0</span>
-            </button>
+            <button class="icon-btn" onclick="navigateTo('notifications')"><i class="fas fa-bell"></i><span class="badge" id="notificationBadge" style="display:none;">0</span></button>
             <button class="icon-btn" onclick="navigateTo('profile')"><i class="fas fa-user-circle"></i></button>
         </div>
     </div>
 
-    <!-- ========== شاشة التغذية الرئيسية ========== -->
     <main id="feedScreen" class="active-screen">
         <div class="stories-row" id="storiesRow"></div>
         <div class="feed-tabs">
             <button class="feed-tab active" data-feed="all" onclick="setActiveFeedTab('all')">الكل</button>
             <button class="feed-tab" data-feed="following" onclick="setActiveFeedTab('following')">المتابَعون</button>
         </div>
-        <div class="feed-container" id="feedContainer">
-            <div class="empty-state"><i class="fas fa-spinner fa-pulse"></i><p>جاري تحميل المنشورات...</p></div>
-        </div>
+        <div class="feed-container" id="feedContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i><p>جاري تحميل المنشورات...</p></div></div>
         <div id="infiniteLoader" class="infinite-loader" style="display: none;"><i class="fas fa-spinner fa-pulse spinner"></i> جاري تحميل المزيد...</div>
     </main>
 
-    <!-- ========== شاشة البحث ========== -->
     <div id="searchScreen" class="search-screen">
-        <div class="search-input-area">
-            <input type="text" id="searchInput" placeholder="🔍 ابحث عن منشورات، أشخاص، وسوم...">
-            <button class="icon-btn" onclick="navigateTo('feed')"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="search-tabs">
-            <button class="search-tab-btn active" data-search-tab="all">الكل</button>
-            <button class="search-tab-btn" data-search-tab="users">أشخاص</button>
-            <button class="search-tab-btn" data-search-tab="hashtags">وسوم</button>
-            <button class="search-tab-btn" data-search-tab="posts">منشورات</button>
-        </div>
+        <div class="search-input-area"><input type="text" id="searchInput" placeholder="🔍 ابحث عن منشورات، أشخاص، وسوم..."><button class="icon-btn" onclick="navigateTo('feed')"><i class="fas fa-times"></i></button></div>
+        <div class="search-tabs"><button class="search-tab-btn active" data-search-tab="all">الكل</button><button class="search-tab-btn" data-search-tab="users">أشخاص</button><button class="search-tab-btn" data-search-tab="hashtags">وسوم</button><button class="search-tab-btn" data-search-tab="posts">منشورات</button></div>
         <div class="search-results" id="searchResults"><div class="empty-state"><i class="fas fa-search"></i><p>ابحث عن شيء مثير للاهتمام</p></div></div>
     </div>
 
-    <!-- ========== شاشة إنشاء منشور متقدمة ========== -->
     <div id="createScreen" class="create-post-screen">
         <h2 style="margin-bottom:16px; font-weight:800;">📝 إنشاء منشور جديد</h2>
         <div class="form-group"><label>العنوان</label><input type="text" id="postTitle" placeholder="أدخل عنوان المنشور"></div>
@@ -105,7 +66,6 @@
         <div style="text-align:center; margin-top:12px;"><button class="profile-btn btn-edit" onclick="navigateTo('feed')">إلغاء</button></div>
     </div>
 
-    <!-- ========== شاشة القصص ========== -->
     <div id="storiesViewer" class="stories-viewer" style="display:none;">
         <div class="story-progress-bar"><div class="story-progress-bar-inner" id="storyProgressBarInner"></div></div>
         <button class="close-story-btn" onclick="closeStoryViewer()"><i class="fas fa-times"></i></button>
@@ -113,181 +73,53 @@
         <div class="story-reply-area"><input type="text" id="storyReplyInput" placeholder="رد على القصة..."><button onclick="sendStoryReply()"><i class="fas fa-paper-plane"></i></button></div>
     </div>
 
-    <!-- ========== شاشة الملف الشخصي ========== -->
     <div id="profileScreen" class="profile-screen">
         <div class="profile-header">
-            <img class="profile-avatar" id="profileAvatar" src="https://via.placeholder.com/200" alt="الصورة الشخصية">
+            <img class="profile-avatar" id="profileAvatar" src="https://via.placeholder.com/200">
             <div class="profile-badges" id="profileBadges"></div>
             <div class="profile-name" id="profileName">زائر</div>
             <div class="profile-bio" id="profileBio">مرحباً! أنا مستخدم جديد في Ramz-X 🚀</div>
-            <div class="profile-stats">
-                <div class="stat-item"><span class="stat-number" id="profilePostsCount">0</span><span class="stat-label">منشورات</span></div>
-                <div class="stat-item" onclick="showFollowersList()"><span class="stat-number" id="profileFollowers">0</span><span class="stat-label">متابعون</span></div>
-                <div class="stat-item" onclick="showFollowingList()"><span class="stat-number" id="profileFollowing">0</span><span class="stat-label">يتابع</span></div>
-            </div>
-            <div class="profile-actions">
-                <button class="profile-btn btn-edit" onclick="editProfile()"><i class="fas fa-pen"></i> تعديل</button>
-                <button class="profile-btn btn-share-profile" onclick="shareProfile()"><i class="fas fa-share"></i> مشاركة</button>
-                <button class="profile-btn btn-follow" id="followBtn" onclick="toggleFollow(currentProfileId)" style="display:none;"><i class="fas fa-user-plus"></i> متابعة</button>
-            </div>
+            <div class="profile-stats"><div class="stat-item"><span class="stat-number" id="profilePostsCount">0</span><span class="stat-label">منشورات</span></div><div class="stat-item" onclick="showFollowersList()"><span class="stat-number" id="profileFollowers">0</span><span class="stat-label">متابعون</span></div><div class="stat-item" onclick="showFollowingList()"><span class="stat-number" id="profileFollowing">0</span><span class="stat-label">يتابع</span></div></div>
+            <div class="profile-actions"><button class="profile-btn btn-edit" onclick="editProfile()"><i class="fas fa-pen"></i> تعديل</button><button class="profile-btn btn-share-profile" onclick="shareProfile()"><i class="fas fa-share"></i> مشاركة</button><button class="profile-btn btn-follow" id="followBtn" onclick="toggleFollow(currentProfileId)" style="display:none;"><i class="fas fa-user-plus"></i> متابعة</button></div>
         </div>
-        <div class="profile-tabs">
-            <button class="profile-tab active" data-profile-tab="posts"><i class="fas fa-grid-2"></i> المنشورات</button>
-            <button class="profile-tab" data-profile-tab="saved"><i class="fas fa-bookmark"></i> المحفوظات</button>
-            <button class="profile-tab" data-profile-tab="liked"><i class="fas fa-heart"></i> الإعجابات</button>
-            <button class="profile-tab" data-profile-tab="collections"><i class="fas fa-layer-group"></i> مجموعات</button>
-        </div>
+        <div class="profile-tabs"><button class="profile-tab active" data-profile-tab="posts"><i class="fas fa-grid-2"></i> المنشورات</button><button class="profile-tab" data-profile-tab="saved"><i class="fas fa-bookmark"></i> المحفوظات</button><button class="profile-tab" data-profile-tab="liked"><i class="fas fa-heart"></i> الإعجابات</button><button class="profile-tab" data-profile-tab="collections"><i class="fas fa-layer-group"></i> مجموعات</button></div>
         <div class="profile-posts" id="profilePostsContainer"><div class="empty-state"><i class="fas fa-camera"></i><p>لا توجد منشورات بعد</p></div></div>
     </div>
 
-    <!-- ========== شاشة الإشعارات ========== -->
-    <div id="notificationsScreen" class="notifications-screen">
-        <h2 style="padding:16px;">🔔 الإشعارات</h2>
-        <div class="notifications-list" id="notificationsList"></div>
-    </div>
+    <div id="notificationsScreen" class="notifications-screen"><h2 style="padding:16px;">🔔 الإشعارات</h2><div class="notifications-list" id="notificationsList"></div></div>
 
-    <!-- ========== شاشة صندوق الوارد والمحادثات ========== -->
     <div id="inboxScreen" class="inbox-screen">
-        <div class="inbox-header">
-            <h2 style="font-weight:800; margin: 0 0 12px 0;">📥 صندوق الوارد</h2>
-            <div class="inbox-tabs">
-                <button class="inbox-tab active" data-inbox-tab="all">الكل</button>
-                <button class="inbox-tab" data-inbox-tab="following">المتابَعون</button>
-                <button class="inbox-tab" data-inbox-tab="requests">الطلبات</button>
-            </div>
-        </div>
-        <div id="inboxListView">
-            <div class="search-input-area" style="margin: 12px 0;">
-                <input type="text" id="messageSearchInput" placeholder="🔍 بحث في المحادثات...">
-            </div>
-            <ul class="inbox-list" id="inboxList"></ul>
-            <button class="new-conversation-btn" onclick="startNewConversation()"><i class="fas fa-plus"></i> محادثة جديدة</button>
-            <div class="empty-state" id="inboxEmptyState" style="display:none;"><i class="fas fa-comments"></i><p>لا توجد محادثات حالياً</p></div>
-        </div>
-        <div id="conversationView" class="conversation-view" style="display:none;">
-            <div class="conv-header">
-                <button class="back-btn" onclick="showInboxList()"><i class="fas fa-arrow-right"></i></button>
-                <img id="convAvatar" class="conv-avatar" src="" alt="">
-                <span id="convName" class="conv-name"></span>
-                <div style="flex:1"></div>
-                <button class="icon-btn" onclick="togglePinConversation()" title="تثبيت المحادثة"><i class="fas fa-thumbtack"></i></button>
-                <button class="icon-btn" onclick="deleteConversation()" title="حذف المحادثة"><i class="fas fa-trash"></i></button>
-            </div>
-            <div class="messages-container" id="messagesContainer"></div>
-            <div class="message-input-area">
-                <button class="message-image-btn" onclick="document.getElementById('messageImageInput').click()"><i class="fas fa-image"></i></button>
-                <input type="file" id="messageImageInput" accept="image/*" style="display:none;" onchange="sendMessageImage()">
-                <input type="text" id="messageInput" placeholder="اكتب رسالة...">
-                <button class="message-send-btn" onclick="sendMessageText()"><i class="fas fa-paper-plane"></i></button>
-            </div>
-        </div>
+        <div class="inbox-header"><h2 style="font-weight:800; margin: 0 0 12px 0;">📥 صندوق الوارد</h2><div class="inbox-tabs"><button class="inbox-tab active" data-inbox-tab="all">الكل</button><button class="inbox-tab" data-inbox-tab="following">المتابَعون</button><button class="inbox-tab" data-inbox-tab="requests">الطلبات</button></div></div>
+        <div id="inboxListView"><div class="search-input-area" style="margin: 12px 0;"><input type="text" id="messageSearchInput" placeholder="🔍 بحث في المحادثات..."></div><ul class="inbox-list" id="inboxList"></ul><button class="new-conversation-btn" onclick="startNewConversation()"><i class="fas fa-plus"></i> محادثة جديدة</button><div class="empty-state" id="inboxEmptyState" style="display:none;"><i class="fas fa-comments"></i><p>لا توجد محادثات حالياً</p></div></div>
+        <div id="conversationView" class="conversation-view" style="display:none;"><div class="conv-header"><button class="back-btn" onclick="showInboxList()"><i class="fas fa-arrow-right"></i></button><img id="convAvatar" class="conv-avatar"><span id="convName" class="conv-name"></span><div style="flex:1"></div><button class="icon-btn" onclick="togglePinConversation()" title="تثبيت المحادثة"><i class="fas fa-thumbtack"></i></button><button class="icon-btn" onclick="deleteConversation()" title="حذف المحادثة"><i class="fas fa-trash"></i></button></div><div class="messages-container" id="messagesContainer"></div><div class="message-input-area"><button class="message-image-btn" onclick="document.getElementById('messageImageInput').click()"><i class="fas fa-image"></i></button><input type="file" id="messageImageInput" accept="image/*" style="display:none;" onchange="sendMessageImage()"><input type="text" id="messageInput" placeholder="اكتب رسالة..."><button class="message-send-btn" onclick="sendMessageText()"><i class="fas fa-paper-plane"></i></button></div></div>
     </div>
 
-    <!-- ========== نافذة التعليقات ========== -->
     <div id="commentsSheet" class="comments-bottom-sheet">
-        <div class="sheet-handle"></div>
-        <div class="sheet-header"><h3>💬 التعليقات (<span id="sheetCommentsCount">0</span>)</h3><button class="close-sheet-btn" id="closeSheetBtn">&times;</button></div>
+        <div class="sheet-handle"></div><div class="sheet-header"><h3>💬 التعليقات (<span id="sheetCommentsCount">0</span>)</h3><button class="close-sheet-btn" id="closeSheetBtn">&times;</button></div>
         <div class="comments-list-container" id="sheetCommentsList"></div>
-        <div class="comment-input-area">
-            <button class="input-icon-btn" id="emojiBtn"><i class="far fa-smile-wink"></i></button>
-            <button class="input-icon-btn" id="attachImageBtn"><i class="fas fa-image"></i></button>
-            <input type="text" id="newCommentInput" placeholder="اكتب تعليقاً...">
-            <button class="send-btn" id="sendCommentBtn">إرسال</button>
-        </div>
-        <div id="emojiPicker" class="emoji-picker"></div>
-        <input type="file" id="imageUpload" accept="image/*" style="display:none">
+        <div class="comment-input-area"><button class="input-icon-btn" id="emojiBtn"><i class="far fa-smile-wink"></i></button><button class="input-icon-btn" id="attachImageBtn"><i class="fas fa-image"></i></button><input type="text" id="newCommentInput" placeholder="اكتب تعليقاً..."><button class="send-btn" id="sendCommentBtn">إرسال</button></div>
+        <div id="emojiPicker" class="emoji-picker"></div><input type="file" id="imageUpload" accept="image/*" style="display:none">
     </div>
 
-    <!-- ========== نافذة المشاركة المتقدمة ========== -->
     <div id="shareAdvancedSheet" class="share-bottom-sheet">
-        <div class="sheet-handle"></div>
-        <div class="sheet-header"><h3>📤 مشاركة متقدمة</h3><button class="close-sheet-btn" id="closeShareSheetBtn">&times;</button></div>
-        <div class="share-tabs">
-            <button class="tab-btn active" data-tab="tab-share">مشاركة</button>
-            <button class="tab-btn" data-tab="tab-download">تحميل</button>
-            <button class="tab-btn" data-tab="tab-report">تبليغ</button>
-            <button class="tab-btn" data-tab="tab-embed">تضمين</button>
-            <button class="tab-btn" data-tab="tab-qr">QR Code</button>
-        </div>
-        <div class="tab-content">
-            <div class="tab-pane active" id="tab-share">
-                <div class="social-icons">
-                    <div class="social-icon whatsapp" data-platform="whatsapp"><div class="icon-circle"><i class="fab fa-whatsapp"></i></div><span>واتساب</span></div>
-                    <div class="social-icon facebook" data-platform="facebook"><div class="icon-circle"><i class="fab fa-facebook-f"></i></div><span>فيسبوك</span></div>
-                    <div class="social-icon twitter" data-platform="twitter"><div class="icon-circle"><i class="fab fa-twitter"></i></div><span>تويتر</span></div>
-                    <div class="social-icon telegram" data-platform="telegram"><div class="icon-circle"><i class="fab fa-telegram-plane"></i></div><span>تيليجرام</span></div>
-                    <div class="social-icon instagram" data-platform="instagram"><div class="icon-circle"><i class="fab fa-instagram"></i></div><span>انستقرام</span></div>
-                    <div class="social-icon email" data-platform="email"><div class="icon-circle"><i class="fas fa-envelope"></i></div><span>بريد</span></div>
-                    <div class="social-icon copy-link" data-platform="copy"><div class="icon-circle"><i class="fas fa-link"></i></div><span>نسخ الرابط</span></div>
-                </div>
-            </div>
-            <div class="tab-pane" id="tab-download"><div style="text-align:center;padding:40px;"><button class="profile-btn btn-share-profile" onclick="downloadPostImage()" style="font-size:16px;"><i class="fas fa-download"></i> تحميل صورة المنشور</button></div></div>
-            <div class="tab-pane" id="tab-report"><div style="text-align:center;padding:40px;"><p style="margin-bottom:16px;">إبلاغ عن هذا المحتوى</p><button class="profile-btn btn-edit" onclick="showToast('🚩 تم استلام البلاغ، شكراً لك')"><i class="fas fa-flag"></i> إبلاغ</button></div></div>
-            <div class="tab-pane" id="tab-embed"><div style="text-align:center;padding:40px;"><p style="margin-bottom:12px;">كود التضمين:</p><code style="background:var(--bg-input);padding:10px;border-radius:8px;display:block;word-break:break-all;font-size:11px;">&lt;iframe src="..."&gt;&lt;/iframe&gt;</code></div></div>
-            <div class="tab-pane" id="tab-qr"><div style="text-align:center;padding:40px;"><p>📱 مسح QR Code للمشاركة</p><div style="width:150px;height:150px;background:white;margin:20px auto;border-radius:12px;display:flex;align-items:center;justify-content:center;color:black;">QR قريباً</div></div></div>
-        </div>
+        <div class="sheet-handle"></div><div class="sheet-header"><h3>📤 مشاركة متقدمة</h3><button class="close-sheet-btn" id="closeShareSheetBtn">&times;</button></div>
+        <div class="share-tabs"><button class="tab-btn active" data-tab="tab-share">مشاركة</button><button class="tab-btn" data-tab="tab-download">تحميل</button><button class="tab-btn" data-tab="tab-report">تبليغ</button><button class="tab-btn" data-tab="tab-embed">تضمين</button><button class="tab-btn" data-tab="tab-qr">QR Code</button></div>
+        <div class="tab-content"><div class="tab-pane active" id="tab-share"><div class="social-icons"><div class="social-icon whatsapp" data-platform="whatsapp"><div class="icon-circle"><i class="fab fa-whatsapp"></i></div><span>واتساب</span></div><div class="social-icon facebook" data-platform="facebook"><div class="icon-circle"><i class="fab fa-facebook-f"></i></div><span>فيسبوك</span></div><div class="social-icon twitter" data-platform="twitter"><div class="icon-circle"><i class="fab fa-twitter"></i></div><span>تويتر</span></div><div class="social-icon telegram" data-platform="telegram"><div class="icon-circle"><i class="fab fa-telegram-plane"></i></div><span>تيليجرام</span></div><div class="social-icon instagram" data-platform="instagram"><div class="icon-circle"><i class="fab fa-instagram"></i></div><span>انستقرام</span></div><div class="social-icon email" data-platform="email"><div class="icon-circle"><i class="fas fa-envelope"></i></div><span>بريد</span></div><div class="social-icon copy-link" data-platform="copy"><div class="icon-circle"><i class="fas fa-link"></i></div><span>نسخ الرابط</span></div></div></div><div class="tab-pane" id="tab-download"><div style="text-align:center;padding:40px;"><button class="profile-btn btn-share-profile" onclick="downloadPostImage()" style="font-size:16px;"><i class="fas fa-download"></i> تحميل صورة المنشور</button></div></div><div class="tab-pane" id="tab-report"><div style="text-align:center;padding:40px;"><p>إبلاغ عن هذا المحتوى</p><button class="profile-btn btn-edit" onclick="showToast('🚩 تم استلام البلاغ، شكراً لك')"><i class="fas fa-flag"></i> إبلاغ</button></div></div><div class="tab-pane" id="tab-embed"><div style="text-align:center;padding:40px;"><p>كود التضمين:</p><code style="background:var(--bg-input);padding:10px;border-radius:8px;display:block;">&lt;iframe src="..."&gt;&lt;/iframe&gt;</code></div></div><div class="tab-pane" id="tab-qr"><div style="text-align:center;padding:40px;"><p>📱 مسح QR Code للمشاركة</p><div style="width:150px;height:150px;background:white;margin:20px auto;border-radius:12px;display:flex;align-items:center;justify-content:center;color:black;">QR قريباً</div></div></div></div>
     </div>
 
-    <!-- ========== مودال تسجيل الدخول ========== -->
-    <div class="modal-overlay" id="authModal">
-        <div class="auth-modal">
-            <h2 id="authModalTitle">🚀 انضم إلى Ramz-X</h2>
-            <input type="text" class="auth-input" id="authUsername" placeholder="اسم المستخدم">
-            <input type="email" class="auth-input" id="authEmail" placeholder="البريد الإلكتروني">
-            <input type="password" class="auth-input" id="authPassword" placeholder="كلمة المرور">
-            <button class="auth-btn" id="authSubmitBtn">تسجيل الدخول</button>
-            <div class="auth-switch" id="authSwitch">ليس لديك حساب؟ <span>سجل الآن</span></div>
-        </div>
-    </div>
+    <div class="modal-overlay" id="authModal"><div class="auth-modal"><h2 id="authModalTitle">🚀 انضم إلى Ramz-X</h2><input type="text" class="auth-input" id="authUsername" placeholder="اسم المستخدم"><input type="email" class="auth-input" id="authEmail" placeholder="البريد الإلكتروني"><input type="password" class="auth-input" id="authPassword" placeholder="كلمة المرور"><button class="auth-btn" id="authSubmitBtn">تسجيل الدخول</button><div class="auth-switch" id="authSwitch">ليس لديك حساب؟ <span>سجل الآن</span></div></div></div>
 
-    <!-- ========== وضع ملء الشاشة ========== -->
-    <div class="fullscreen-feed" id="fullscreenFeed">
-        <button class="close-fullscreen" onclick="closeFullscreen()"><i class="fas fa-times"></i></button>
-    </div>
+    <div class="fullscreen-feed" id="fullscreenFeed"><button class="close-fullscreen" onclick="closeFullscreen()"><i class="fas fa-times"></i></button></div>
 
-    <!-- ========== شريط التنقل السفلي ========== -->
     <nav class="bottom-nav">
-        <button class="nav-item active" data-screen="feed" onclick="navigateTo('feed')">
-            <i class="fas fa-home nav-icon"></i><span class="nav-label">الرئيسية</span>
-        </button>
-        <button class="nav-item" data-screen="search" onclick="navigateTo('search')">
-            <i class="fas fa-compass nav-icon"></i><span class="nav-label">استكشاف</span><span class="nav-dot"></span>
-        </button>
-        <button class="nav-item create-btn" data-screen="create" onclick="navigateTo('create')">
-            <i class="fas fa-plus-circle nav-icon"></i><span class="nav-label">إنشاء</span>
-        </button>
-        <button class="nav-item" data-screen="inbox" onclick="navigateTo('inbox')">
-            <i class="fas fa-inbox nav-icon"></i><span class="nav-label">الوارد</span><span class="nav-dot" id="inboxDot" style="display:none;"></span>
-        </button>
-        <button class="nav-item" data-screen="profile" onclick="navigateTo('profile')">
-            <i class="fas fa-user nav-icon"></i><span class="nav-label">الملف</span>
-        </button>
+        <button class="nav-item active" data-screen="feed" onclick="navigateTo('feed')"><i class="fas fa-home nav-icon"></i><span class="nav-label">الرئيسية</span></button>
+        <button class="nav-item" data-screen="search" onclick="navigateTo('search')"><i class="fas fa-compass nav-icon"></i><span class="nav-label">استكشاف</span><span class="nav-dot"></span></button>
+        <button class="nav-item create-btn" data-screen="create" onclick="navigateTo('create')"><i class="fas fa-plus-circle nav-icon"></i><span class="nav-label">إنشاء</span></button>
+        <button class="nav-item" data-screen="inbox" onclick="navigateTo('inbox')"><i class="fas fa-inbox nav-icon"></i><span class="nav-label">الوارد</span><span class="nav-dot" id="inboxDot" style="display:none;"></span></button>
+        <button class="nav-item" data-screen="profile" onclick="navigateTo('profile')"><i class="fas fa-user nav-icon"></i><span class="nav-label">الملف</span></button>
     </nav>
 
-    <!-- جافاسكريبت الرئيسي -->
     <script src="common.js"></script>
-    
-    <!-- إضافة فحص إضافي للأيقونات في حالة فشل التحميل -->
-    <script>
-        (function ensureIcons() {
-            // إذا فشل Font Awesome تماماً، نعرض أيقونات نصية بديلة
-            setTimeout(function() {
-                var icons = document.querySelectorAll('i.fas, i.far, i.fab, i.fal, i.fad');
-                var anyVisible = false;
-                for (var i = 0; i < icons.length; i++) {
-                    var style = window.getComputedStyle(icons[i]);
-                    if (style.fontFamily && style.fontFamily.includes('Font Awesome')) {
-                        anyVisible = true;
-                        break;
-                    }
-                }
-                if (!anyVisible) {
-                    // إضافة class احتياطي
-                    document.body.classList.add('no-fontawesome');
-                    console.warn('تم تفعيل الأيقونات الاحتياطية لعدم تحميل Font Awesome');
-                }
-            }, 1500);
-        })();
-    </script>
+    <script>(function(){setTimeout(function(){var icons=document.querySelectorAll('i.fas, i.far, i.fab'); var ok=false; for(var i=0;i<icons.length;i++){var f=window.getComputedStyle(icons[i]).fontFamily; if(f&&f.includes('Font Awesome')){ok=true;break;}} if(!ok) document.body.classList.add('no-fontawesome');},1500);})();</script>
 </body>
-</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </html>
