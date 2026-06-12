@@ -12,11 +12,30 @@
     <meta name="apple-mobile-web-app-title" content="Ramz-X">
     <link rel="apple-touch-icon" href="/icon-192.png">
     
-    <!-- ربط Font Awesome المزدوج (مثل home.html) -->
+    <!-- تحسين تحميل Font Awesome -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://use.fontawesome.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://use.fontawesome.com">
+    
+    <!-- Font Awesome - رابط مزدوج لضمان التحميل -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0-beta3/css/all.css">
     
-    <!-- سكريبت إلغاء Service Worker المؤقت لضمان تحميل الأيقونات -->
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- الأنماط الرئيسية -->
+    <link rel="stylesheet" href="common.css">
+    
+    <!-- Manifest (PWA) -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- إلغاء Service Worker مؤقتاً لضمان تحميل الأيقونات (يمكن تفعيله لاحقاً) -->
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function(registrations) {
@@ -27,18 +46,8 @@
             });
         }
     </script>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- External Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    
-    <link rel="stylesheet" href="common.css">
-    <link rel="manifest" href="manifest.json">
 </head>
-<body class="dark-theme">
+<body>
 
     <!-- ========== شريط الهيدر ========== -->
     <div class="header">
@@ -255,6 +264,30 @@
         </button>
     </nav>
 
+    <!-- جافاسكريبت الرئيسي -->
     <script src="common.js"></script>
+    
+    <!-- إضافة فحص إضافي للأيقونات في حالة فشل التحميل -->
+    <script>
+        (function ensureIcons() {
+            // إذا فشل Font Awesome تماماً، نعرض أيقونات نصية بديلة
+            setTimeout(function() {
+                var icons = document.querySelectorAll('i.fas, i.far, i.fab, i.fal, i.fad');
+                var anyVisible = false;
+                for (var i = 0; i < icons.length; i++) {
+                    var style = window.getComputedStyle(icons[i]);
+                    if (style.fontFamily && style.fontFamily.includes('Font Awesome')) {
+                        anyVisible = true;
+                        break;
+                    }
+                }
+                if (!anyVisible) {
+                    // إضافة class احتياطي
+                    document.body.classList.add('no-fontawesome');
+                    console.warn('تم تفعيل الأيقونات الاحتياطية لعدم تحميل Font Awesome');
+                }
+            }, 1500);
+        })();
+    </script>
 </body>
 </html>
