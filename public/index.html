@@ -12,19 +12,42 @@
     <meta name="apple-mobile-web-app-title" content="Ramz-X">
     <link rel="apple-touch-icon" href="/icon-192.png">
     
-    <!-- Font Awesome -->
+    <!-- تحسين تحميل Font Awesome -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://use.fontawesome.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://use.fontawesome.com">
+    
+    <!-- Font Awesome - رابط مزدوج لضمان التحميل -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0-beta3/css/all.css">
+    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <link rel="stylesheet" href="style.css">
+    <!-- الأنماط الرئيسية -->
+    <link rel="stylesheet" href="common.css">
+    
+    <!-- Manifest (PWA) -->
     <link rel="manifest" href="manifest.json">
+    
+    <!-- إلغاء Service Worker مؤقتاً لضمان تحميل الأيقونات (يمكن تفعيله لاحقاً) -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                    console.log('تم إلغاء Service Worker مؤقتاً لتجنب مشاكل التخزين المؤقت');
+                }
+            });
+        }
+    </script>
 </head>
-<body class="dark-theme">
+<body>
 
     <!-- ========== شريط الهيدر ========== -->
     <div class="header">
@@ -123,9 +146,8 @@
         <div class="notifications-list" id="notificationsList"></div>
     </div>
 
-    <!-- ========== شاشة صندوق الوارد والمحادثات (نمط تيك توك) ========== -->
+    <!-- ========== شاشة صندوق الوارد والمحادثات ========== -->
     <div id="inboxScreen" class="inbox-screen">
-        <!-- رأس الصفحة مع تبويبات -->
         <div class="inbox-header">
             <h2 style="font-weight:800; margin: 0 0 12px 0;">📥 صندوق الوارد</h2>
             <div class="inbox-tabs">
@@ -134,23 +156,14 @@
                 <button class="inbox-tab" data-inbox-tab="requests">الطلبات</button>
             </div>
         </div>
-
-        <!-- حاوية المحادثات -->
         <div id="inboxListView">
             <div class="search-input-area" style="margin: 12px 0;">
                 <input type="text" id="messageSearchInput" placeholder="🔍 بحث في المحادثات...">
             </div>
-            <ul class="inbox-list" id="inboxList">
-                <!-- تُملأ عبر JavaScript -->
-            </ul>
+            <ul class="inbox-list" id="inboxList"></ul>
             <button class="new-conversation-btn" onclick="startNewConversation()"><i class="fas fa-plus"></i> محادثة جديدة</button>
-            <div class="empty-state" id="inboxEmptyState" style="display:none;">
-                <i class="fas fa-comments"></i>
-                <p>لا توجد محادثات حالياً</p>
-            </div>
+            <div class="empty-state" id="inboxEmptyState" style="display:none;"><i class="fas fa-comments"></i><p>لا توجد محادثات حالياً</p></div>
         </div>
-
-        <!-- نافذة المحادثة (تظهر عند النقر) -->
         <div id="conversationView" class="conversation-view" style="display:none;">
             <div class="conv-header">
                 <button class="back-btn" onclick="showInboxList()"><i class="fas fa-arrow-right"></i></button>
@@ -251,6 +264,30 @@
         </button>
     </nav>
 
-    <script src="script.js"></script>
+    <!-- جافاسكريبت الرئيسي -->
+    <script src="common.js"></script>
+    
+    <!-- إضافة فحص إضافي للأيقونات في حالة فشل التحميل -->
+    <script>
+        (function ensureIcons() {
+            // إذا فشل Font Awesome تماماً، نعرض أيقونات نصية بديلة
+            setTimeout(function() {
+                var icons = document.querySelectorAll('i.fas, i.far, i.fab, i.fal, i.fad');
+                var anyVisible = false;
+                for (var i = 0; i < icons.length; i++) {
+                    var style = window.getComputedStyle(icons[i]);
+                    if (style.fontFamily && style.fontFamily.includes('Font Awesome')) {
+                        anyVisible = true;
+                        break;
+                    }
+                }
+                if (!anyVisible) {
+                    // إضافة class احتياطي
+                    document.body.classList.add('no-fontawesome');
+                    console.warn('تم تفعيل الأيقونات الاحتياطية لعدم تحميل Font Awesome');
+                }
+            }, 1500);
+        })();
+    </script>
 </body>
-      </html>
+</html>
