@@ -35,7 +35,7 @@ app.use(morgan('dev'));
 
 // الحد من الطلبات
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 دقيقة
+    windowMs: 15 * 60 * 1000,
     max: 200,
     message: { error: 'طلبات كثيرة جداً، يرجى المحاولة لاحقاً' }
 });
@@ -43,7 +43,7 @@ app.use('/api/', limiter);
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use(express.static(__dirname)); // يخدم الملفات من جذر المشروع (index.html, common.js, common.css)
+app.use(express.static(__dirname)); // يخدم index.html, common.js, common.css
 
 // إعداد multer لتخزين الملفات
 const storage = multer.diskStorage({
@@ -54,6 +54,9 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+
+// خدمة الملفات المرفوعة (static)
+app.use('/uploads', express.static(UPLOADS_DIR));
 
 // ---------- Database helpers ----------
 function readDB() {
@@ -96,11 +99,11 @@ function initDB() {
     return initial;
 }
 
-// ---------- Seed Data ----------
+// ---------- Seed Data (بيانات أولية) ----------
 function seedDatabase(db) {
     if (db.users.length > 0) return;
 
-    // ========== المستخدمين ==========
+    // المستخدمين
     const userNames = ['شعلان', 'ترف', 'زينة', 'رمزي', 'هيلان', 'أنور', 'حاميم', 'رؤية', 'نور'];
     const users = userNames.map((name, index) => ({
         id: uuidv4(),
@@ -116,7 +119,7 @@ function seedDatabase(db) {
     }));
     db.users = users;
 
-    // ========== المنشورات ==========
+    // المنشورات
     const sampleTemplates = [
         { title: 'صباح الخير ☀️', content: 'أجمل ما في الصباح هو الأمل بولادة جديدة. #تفاؤل', hashtag: 'صباح_الخير', category: 'عام', image: 'https://picsum.photos/id/1015/800/600', video: '' },
         { title: 'تقنية البلوك تشين', content: 'البلوك تشين ليست فقط عملات رقمية، بل ثورة في حفظ البيانات. #تقنية', hashtag: 'بلوك_تشين', category: 'تقنية', image: 'https://picsum.photos/id/1/800/600', video: '' },
@@ -153,7 +156,7 @@ function seedDatabase(db) {
     }
     db.posts = posts;
 
-    // ========== إعجابات ==========
+    // إعجابات أولية
     posts.forEach(post => {
         const likers = users.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 5) + 1);
         likers.forEach(u => {
@@ -166,10 +169,10 @@ function seedDatabase(db) {
         });
     });
 
-    // ========== تعليقات ==========
+    // تعليقات أولية
     posts.slice(0, 8).forEach(post => {
         const commenter = users[Math.floor(Math.random() * users.length)];
-        const comment = {
+        db.comments.push({
             id: uuidv4(),
             post_id: post.id,
             user_id: commenter.id,
@@ -178,16 +181,13 @@ function seedDatabase(db) {
             parent_id: null,
             likes_count: Math.floor(Math.random() * 5),
             created_at: new Date().toISOString()
-        };
-        db.comments.push(comment);
+        });
         post.comments_count = 1;
     });
 
-    // ========== متابعات ==========
+    // متابعات
     users.forEach(u => {
-        const targets = users.filter(o => o.id !== u.id)
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 3);
+        const targets = users.filter(o => o.id !== u.id).sort(() => 0.5 - Math.random()).slice(0, 3);
         targets.forEach(t => {
             db.follows.push({
                 id: uuidv4(),
@@ -198,7 +198,7 @@ function seedDatabase(db) {
         });
     });
 
-    // ========== قصص ==========
+    // قصص
     users.slice(0, 5).forEach(u => {
         db.stories.push({
             id: uuidv4(),
@@ -209,7 +209,7 @@ function seedDatabase(db) {
         });
     });
 
-    // ========== محادثة ==========
+    // محادثة نموذجية
     const convId = uuidv4();
     db.conversations.push({ id: convId, created_at: new Date().toISOString() });
     db.conversation_participants.push(
@@ -221,7 +221,7 @@ function seedDatabase(db) {
         { id: uuidv4(), conversation_id: convId, sender_id: users[1].id, text: 'أهلاً شعلان، الحمد لله، وأنت؟', image_url: '', is_read: false, created_at: new Date().toISOString() }
     );
 
-    // ========== مجموعة ==========
+    // مجموعة
     const groupId = uuidv4();
     db.groups.push({ id: groupId, name: 'عشاق التقنية', creator_id: users[0].id, created_at: new Date().toISOString() });
     db.group_members.push(
@@ -229,7 +229,7 @@ function seedDatabase(db) {
         { group_id: groupId, user_id: users[2].id, role: 'member' }
     );
 
-    // ========== استطلاع ==========
+    // استطلاع رأي
     const pollId = uuidv4();
     db.polls.push({
         id: pollId,
@@ -244,7 +244,7 @@ function seedDatabase(db) {
         created_at: new Date().toISOString()
     });
 
-    // ========== حدث ==========
+    // حدث
     const eventId = uuidv4();
     db.events.push({
         id: eventId,
@@ -256,7 +256,7 @@ function seedDatabase(db) {
         created_at: new Date().toISOString()
     });
 
-    // ========== إشعارات ==========
+    // إشعارات
     db.notifications.push(
         { id: uuidv4(), user_id: users[0].id, type: 'like', actor_id: users[1].id, reference_id: posts[0].id, is_read: false, created_at: new Date().toISOString() },
         { id: uuidv4(), user_id: users[1].id, type: 'follow', actor_id: users[0].id, reference_id: null, is_read: false, created_at: new Date().toISOString() },
@@ -264,7 +264,7 @@ function seedDatabase(db) {
     );
 }
 
-// ---------- Helper: notify ----------
+// ---------- Helper: إضافة إشعار ----------
 function addNotification(db, userId, type, actorId, referenceId = null) {
     db.notifications.unshift({
         id: uuidv4(),
@@ -277,7 +277,7 @@ function addNotification(db, userId, type, actorId, referenceId = null) {
     });
 }
 
-// ---------- Auth Middleware ----------
+// ---------- Middleware للمصادقة ----------
 function authMiddleware(req, res, next) {
     const header = req.headers.authorization;
     if (!header || !header.startsWith('Bearer ')) {
@@ -295,7 +295,15 @@ function authMiddleware(req, res, next) {
 
 // ========== API Routes ==========
 
-// ---------- Auth ----------
+// ---------- نقطة نهاية رفع الصور (للواجهة) ----------
+app.post('/api/upload', authMiddleware, upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'لم يتم إرسال ملف' });
+    }
+    res.json({ url: `/uploads/${req.file.filename}` });
+});
+
+// ---------- المصادقة ----------
 app.post('/api/auth/signup', async (req, res) => {
     const { email, password, username } = req.body;
     const db = readDB();
@@ -334,7 +342,7 @@ app.post('/api/auth/signin', async (req, res) => {
     res.json({ user: safeUser, token });
 });
 
-// ---------- Profile ----------
+// ---------- الملف الشخصي ----------
 app.get('/api/profiles/:id', (req, res) => {
     const db = readDB();
     const user = db.users.find(u => u.id === req.params.id);
@@ -360,7 +368,7 @@ app.put('/api/profiles/:id', authMiddleware, (req, res) => {
     res.json(safe);
 });
 
-// ---------- Follows ----------
+// ---------- المتابعة ----------
 app.post('/api/follows', authMiddleware, (req, res) => {
     const { following_id } = req.body;
     const db = readDB();
@@ -383,7 +391,7 @@ app.get('/api/follows/status/:targetId', authMiddleware, (req, res) => {
     res.json({ following });
 });
 
-// ---------- Posts ----------
+// ---------- المنشورات ----------
 app.get('/api/posts', (req, res) => {
     const db = readDB();
     const { limit = 10, cursor, author_id } = req.query;
@@ -536,7 +544,7 @@ app.post('/api/posts/:id/view', (req, res) => {
     res.json({ views_count: post?.views_count || 0 });
 });
 
-// ---------- Comments ----------
+// ---------- التعليقات ----------
 app.get('/api/posts/:id/comments', (req, res) => {
     const db = readDB();
     const comments = db.comments
@@ -590,7 +598,7 @@ app.post('/api/comments/:id/like', authMiddleware, (req, res) => {
     res.json({ liked: true, likes_count: comment.likes_count });
 });
 
-// ---------- Stories ----------
+// ---------- القصص ----------
 app.get('/api/stories', (req, res) => {
     const db = readDB();
     const valid = db.stories.filter(s => new Date(s.expires_at) > new Date());
@@ -629,7 +637,7 @@ app.post('/api/stories/:id/reply', authMiddleware, (req, res) => {
     res.json({ success: true });
 });
 
-// ---------- Conversations & Messages ----------
+// ---------- المحادثات والمراسلة ----------
 app.get('/api/conversations', authMiddleware, (req, res) => {
     const db = readDB();
     const partIds = db.conversation_participants.filter(p => p.user_id === req.userId).map(p => p.conversation_id);
@@ -701,7 +709,7 @@ app.put('/api/conversations/:id/read', authMiddleware, (req, res) => {
     res.json({ success: true });
 });
 
-// ---------- Notifications ----------
+// ---------- الإشعارات ----------
 app.get('/api/notifications', authMiddleware, (req, res) => {
     const db = readDB();
     const notifs = db.notifications
@@ -726,7 +734,7 @@ app.put('/api/notifications/read', authMiddleware, (req, res) => {
     res.json({ success: true });
 });
 
-// ---------- Search ----------
+// ---------- البحث ----------
 app.get('/api/search', (req, res) => {
     const { q } = req.query;
     if (!q) return res.json({ users: [], posts: [] });
@@ -743,7 +751,7 @@ app.get('/api/search', (req, res) => {
     res.json({ users, posts });
 });
 
-// ---------- Groups ----------
+// ---------- المجموعات ----------
 app.get('/api/groups', (req, res) => {
     res.json(readDB().groups);
 });
@@ -762,7 +770,7 @@ app.post('/api/groups', authMiddleware, (req, res) => {
     res.status(201).json(group);
 });
 
-// ---------- Polls ----------
+// ---------- استطلاعات الرأي ----------
 app.get('/api/polls', (req, res) => {
     res.json(readDB().polls);
 });
@@ -796,7 +804,7 @@ app.post('/api/polls/:id/vote', authMiddleware, (req, res) => {
     res.json(poll);
 });
 
-// ---------- Events ----------
+// ---------- الأحداث ----------
 app.get('/api/events', (req, res) => {
     res.json(readDB().events);
 });
@@ -826,12 +834,12 @@ app.post('/api/events/:id/attend', authMiddleware, (req, res) => {
     res.json(event);
 });
 
-// ---------- Serve Frontend ----------
+// ---------- خدمة واجهة المستخدم ----------
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// ---------- Start Server ----------
+// ---------- تشغيل الخادم ----------
 app.listen(PORT, () => {
     console.log(`🚀 Ramz-X Production server running on http://localhost:${PORT}`);
 });
